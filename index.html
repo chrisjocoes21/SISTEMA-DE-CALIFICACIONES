@@ -221,9 +221,13 @@
                             <input type="password" id="password" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-300 font-medium text-sm placeholder-gray-400" placeholder="Contraseña" autocomplete="new-password">
                         </div>
                         
-                        <!-- Mensaje de error: Espacio reservado pero invisible (opacity-0) para evitar saltos -->
-                        <div id="login-error" class="opacity-0 pointer-events-none h-12 transition-opacity duration-200 p-3 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center gap-2">
-                            <span class="text-xs text-red-600 font-bold">Credenciales incorrectas</span>
+                        <!-- ÁREA DE MENSAJES DE ESTADO (FEEDBACK) -->
+                        <!-- Se mantiene la altura fija (h-12) para evitar saltos, pero el contenido es dinámico -->
+                        <div id="login-status-container" class="h-12 transition-all duration-300 p-3 rounded-lg flex items-center justify-center gap-2 opacity-0 pointer-events-none">
+                            <!-- Icono dinámico -->
+                            <svg id="login-status-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <!-- Texto dinámico -->
+                            <span id="login-status-text" class="text-xs font-bold"></span>
                         </div>
                         
                         <!-- BOTÓN DE LOGIN -->
@@ -413,7 +417,8 @@
         const quoteText = document.getElementById('quote-text');
         const appContent = document.getElementById('app-content');
         const userNameDisplay = document.getElementById('user-name-display');
-        const loginError = document.getElementById('login-error');
+        const loginStatusContainer = document.getElementById('login-status-container');
+        const loginStatusText = document.getElementById('login-status-text');
         const btnLogin = document.getElementById('btn-login');
         const btnText = document.getElementById('btn-text');
         const btnLoader = document.getElementById('btn-loader');
@@ -485,18 +490,34 @@
             }
         }
 
+        // FUNCIÓN AUXILIAR PARA MENSAJES DE ESTADO EN LOGIN
+        function updateLoginStatus(status, message) {
+            loginStatusContainer.classList.remove('opacity-0', 'opacity-100', 'bg-red-50', 'border-red-100', 'bg-green-50', 'border-green-100', 'bg-blue-50', 'border-blue-100', 'text-red-600', 'text-green-600', 'text-blue-600');
+            
+            loginStatusText.textContent = message;
+            
+            // Reset base classes
+            loginStatusContainer.classList.add('opacity-100', 'border');
+            
+            if (status === 'error') {
+                loginStatusContainer.classList.add('bg-red-50', 'border-red-100', 'text-red-600');
+            } else if (status === 'success') {
+                loginStatusContainer.classList.add('bg-green-50', 'border-green-100', 'text-green-600');
+            } else if (status === 'loading') {
+                loginStatusContainer.classList.add('bg-blue-50', 'border-blue-100', 'text-blue-600');
+            }
+        }
+
         async function handleLogin(e) {
             e.preventDefault();
             const usernameInput = document.getElementById('username').value;
             const passwordInput = document.getElementById('password').value;
             
-            // LOGIN ERROR: Se mantiene visible en DOM (opacity-0) para no saltar
-            loginError.classList.remove('opacity-100'); 
-            loginError.classList.add('opacity-0');
+            // MOSTRAR ESTADO CARGANDO
+            updateLoginStatus('loading', 'Verificando credenciales...');
             
             btnText.classList.add('opacity-0');
             btnLoader.classList.remove('hidden');
-            
             btnLogin.classList.add('cursor-not-allowed');
             btnLogin.disabled = true;
 
@@ -504,6 +525,9 @@
                 const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`);
                 const data = await response.json();
                 if (data.success) {
+                    // MOSTRAR ÉXITO
+                    updateLoginStatus('success', '¡Acceso Autorizado!');
+                    
                     sessionStorage.setItem('pinceladas_session', JSON.stringify({
                         auth: true,
                         name: data.name,
@@ -514,14 +538,16 @@
                     checkSystemStatus(); 
                     loadAnnouncements();
 
-                    unlockInterface(data.name);
+                    // Pequeña pausa para que el usuario vea el mensaje de éxito
+                    setTimeout(() => {
+                        unlockInterface(data.name);
+                    }, 800);
                 } else {
                     throw new Error('Credenciales');
                 }
             } catch (error) {
-                // MOSTRAR ERROR sin salto
-                loginError.classList.remove('opacity-0');
-                loginError.classList.add('opacity-100');
+                // MOSTRAR ERROR
+                updateLoginStatus('error', 'Credenciales incorrectas');
                 
                 btnText.classList.remove('opacity-0');
                 btnLoader.classList.add('hidden');
