@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Notas - Pinceladas Montessori</title>
     
-    <!-- FAVICON (Opción 2: Panel Administrativo) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2240%22 width=%2220%22 height=%2250%22 rx=%224%22 fill=%22%231A2C59%22/><rect x=%2240%22 y=%2225%22 width=%2220%22 height=%2265%22 rx=%224%22 fill=%22%231A2C59%22/><rect x=%2270%22 y=%2210%22 width=%2220%22 height=%2280%22 rx=%224%22 fill=%22%23E02B20%22/></svg>">
+    <!-- FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2240%22 width=%2220%22 height=%2250%22 rx=%224%22 fill=%22%23002060%22/><rect x=%2240%22 y=%2225%22 width=%2220%22 height=%2265%22 rx=%224%22 fill=%22%23002060%22/><rect x=%2270%22 y=%2210%22 width=%2220%22 height=%2280%22 rx=%224%22 fill=%22%23C00000%22/></svg>">
 
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,14 +25,14 @@
                     },
                     colors: {
                         montessori: {
-                            blue: '#002060',
-                            red: '#C00000',
+                            blue: '#002060',  /* Azul Oficial Unificado */
+                            red: '#C00000',   /* Rojo Oficial Unificado */
                             yellow: '#FFD966',
                             gray: '#F3F4F6'
                         },
                         logo: {
-                            blue: '#1A2C59',
-                            red: '#E02B20'
+                            blue: '#002060',
+                            red: '#C00000'
                         }
                     },
                     animation: {
@@ -55,42 +55,68 @@
         /* --- CORE LAYOUT --- */
         body { 
             background-color: #F8FAFC; 
-            height: 100vh; /* Altura fija de ventana */
-            overflow: hidden; /* Prevenir scroll en el body principal */
+            height: 100vh; 
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
         
-        /* El contenedor principal maneja su propio scroll si es necesario */
         main {
             flex: 1;
-            overflow-y: auto; /* Scroll interno solo si es necesario */
+            overflow-y: auto; 
             display: flex;
             flex-direction: column;
-            /* Padding reducido para compacidad */
             padding: 1rem; 
         }
 
-        /* Utilidades Scroll Invisible (Aplicado a todo) */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-        *::-webkit-scrollbar {
-            display: none; /* Chrome/Safari/Opera */
+        /* --- ANIMACIÓN DEL BANNER INFINITO (Seamless) --- */
+        .marquee-wrapper {
+            display: flex;
+            overflow: hidden;
+            user-select: none;
+            mask-image: linear-gradient(to right, transparent 0%, black 0%, black 95%, transparent 100%);
+            align-items: center; /* Asegura centrado vertical del contenedor padre */
         }
 
-        /* Loader */
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center; /* Asegura centrado vertical de los items */
+            justify-content: space-around;
+            min-width: 100%;
+            gap: 0; 
+            animation: scroll-seamless 40s linear infinite; 
+            height: 100%; /* Ocupa toda la altura para centrar bien */
+        }
+
+        @keyframes scroll-seamless {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        /* --- ANIMACIÓN COLOR PULSE --- */
+        @keyframes colorPulse { 
+            0% { color: #9CA3AF; } 
+            25% { color: #C00000; } 
+            50% { color: #9CA3AF; } 
+            75% { color: #002060; } 
+            100% { color: #9CA3AF; } 
+        }
+        .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
+
+        /* --- LOADER --- */
         .loader {
-            border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #C00000;
-            width: 24px; height: 24px; animation: spin 1s linear infinite;
+            border: 3px solid rgba(255,255,255,0.3); 
+            border-radius: 50%; 
+            border-top: 3px solid #ffffff;
+            width: 20px; 
+            height: 20px; 
+            animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes colorPulse { 0% { color: #9CA3AF; } 25% { color: #C00000; } 50% { color: #9CA3AF; } 75% { color: #002060; } 100% { color: #9CA3AF; } }
-        .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
         
         /* Transiciones */
         .fade-out { animation: fadeOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
@@ -98,8 +124,9 @@
         @keyframes fadeOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(2px); pointer-events: none; } }
         @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
 
-        /* --- ESTILOS DEL LOGO --- */
-        :root { --logo-blue: #1A2C59; --logo-red: #E02B20; }
+        /* --- ESTILOS DEL LOGO (Variables Unificadas) --- */
+        :root { --logo-blue: #002060; --logo-red: #C00000; }
+        
         .text-colegio {
             color: var(--logo-blue);
             font-family: 'Montserrat', sans-serif;
@@ -129,7 +156,6 @@
             width: auto; 
         }
         
-        /* Escalas */
         .logo-lg .text-colegio { font-size: clamp(1.2rem, 3vw, 1.5rem); }
         .logo-lg .text-pinceladas { font-size: clamp(3rem, 8vw, 4rem); }
         .logo-lg .text-montessori-sub { font-size: clamp(1.2rem, 3vw, 1.5rem); }
@@ -143,7 +169,7 @@
             flex-direction: column;
             justify-content: space-between;
             height: 100%; 
-            padding: 1rem; /* Padding compacto */
+            padding: 1rem; 
         }
     </style>
 </head>
@@ -154,16 +180,12 @@
     <!-- ================================ -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
         
-        <!-- Fondo Animado -->
         <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
-            <div class="absolute top-[50%] left-[-20%] w-[30rem] h-[30rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[9000ms]"></div>
-            <div class="absolute bottom-[5%] right-[50%] w-[25rem] h-[25rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[12000ms]"></div>
         </div>
 
-        <!-- Tarjeta Glassmorphism -->
         <div class="relative z-10 w-full max-w-md p-6 mx-4">
             <div class="bg-white/80 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
                 <div class="logo-container logo-lg cursor-default text-center mb-8">
@@ -189,13 +211,15 @@
                             <input type="password" id="password" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-300 font-medium text-sm placeholder-gray-400" placeholder="Contraseña" autocomplete="new-password">
                         </div>
                         <div id="login-error" class="hidden p-3 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center gap-2 animate-pulse">
-                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span class="text-xs text-red-600 font-bold">Credenciales incorrectas</span>
                         </div>
-                        <button type="submit" id="btn-login" class="w-full bg-gradient-to-r from-montessori-blue to-blue-900 text-white font-bold text-base py-3.5 rounded-xl shadow-lg shadow-blue-900/30 hover:shadow-blue-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex justify-center items-center gap-3">
-                            <span>Acceder</span>
-                            <div id="login-loader" class="loader hidden" style="width: 18px; height: 18px; border-color: white; border-top-color: transparent; border-width: 2px;"></div>
+                        
+                        <!-- BOTÓN DE LOGIN -->
+                        <button type="submit" id="btn-login" class="relative w-full bg-montessori-blue text-white font-bold text-base py-3.5 rounded-xl shadow-lg shadow-montessori-blue/30 hover:bg-montessori-blue hover:shadow-montessori-blue/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex justify-center items-center">
+                            <span id="btn-text">Acceder</span>
+                            <div id="btn-loader" class="loader hidden absolute"></div>
                         </button>
+                        
                     </form>
                     <div class="mt-6 text-center border-t border-gray-100 pt-4">
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gestion.educativa.pinceladas@gmail.com" target="_blank" class="text-xs text-gray-400 hover:text-montessori-blue transition-colors font-medium flex items-center justify-center gap-1">
@@ -208,14 +232,13 @@
     </div>
 
     <!-- ================================ -->
-    <!-- APLICACIÓN PRINCIPAL (OCULTA) -->
+    <!-- APLICACIÓN PRINCIPAL -->
     <!-- ================================ -->
     <div id="app-content" class="hidden flex-col h-full w-full bg-white opacity-0 transition-opacity duration-1000">
         
-        <!-- HEADER COMPACTO -->
+        <!-- HEADER -->
         <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm h-14 flex-shrink-0 w-full">
             <div class="w-full px-4 h-full flex justify-between items-center">
-                <!-- LOGO -->
                 <div class="logo-container logo-sm cursor-pointer hover:opacity-90 transition-opacity" onclick="showHome()">
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
@@ -223,7 +246,6 @@
                         <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
-                <!-- ADMIN -->
                 <div class="flex items-center">
                     <div class="text-right flex flex-col justify-center h-full"> 
                         <p id="user-name-display" class="text-xs font-bold text-gray-700 leading-none mb-0.5">Administración</p>
@@ -237,10 +259,10 @@
 
         <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-4 no-scrollbar overflow-y-auto">
             
-            <!-- DASHBOARD METRICS (Más Compacto) -->
+            <!-- DASHBOARD METRICS -->
             <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 fade-in">
                 <!-- Periodo -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
                     <div class="p-2 bg-blue-50 text-montessori-blue rounded-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
@@ -250,7 +272,7 @@
                     </div>
                 </div>
                 <!-- Estado -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 relative overflow-hidden hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 relative overflow-hidden hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
                     <div id="status-icon-bg" class="p-2 bg-gray-100 text-gray-400 rounded-lg transition-colors duration-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
@@ -261,12 +283,9 @@
                             <span id="status-label">...</span>
                         </p>
                     </div>
-                    <div id="connection-loader" class="absolute bottom-0 left-0 w-full h-1 bg-gray-200">
-                        <div class="h-full bg-montessori-blue animate-pulse w-full origin-left"></div>
-                    </div>
                 </div>
                 <!-- Soporte -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
                     <div class="p-2 bg-red-50 text-montessori-red rounded-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-5 4h4a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
@@ -277,14 +296,14 @@
                 </div>
             </div>
 
-            <!-- VISTA HOME (Grados - Compacto) -->
-            <div id="view-home" class="fade-in h-full flex flex-col">
+            <!-- VISTA HOME (Grados) -->
+            <div id="view-home" class="fade-in h-full flex flex-col pb-8">
+                
                 <!-- Primaria -->
                 <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-1">
                     <div class="h-5 w-1 bg-montessori-red rounded-full"></div>
                     <h2 class="text-lg font-bold text-montessori-red">Nivel Primaria</h2>
                 </div>
-                <!-- Grid Compacto -->
                 <div id="grid-primaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
 
                 <!-- Secundaria -->
@@ -293,6 +312,35 @@
                     <h2 class="text-lg font-bold text-montessori-blue">Nivel Secundaria</h2>
                 </div>
                 <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+
+                <!-- ================================ -->
+                <!-- BANNER DE ANUNCIOS -->
+                <!-- ================================ -->
+                <div id="announcement-banner" class="hidden mt-6 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white max-w-full mx-auto">
+                    <div class="flex items-center relative h-12">
+                        
+                        <!-- Etiqueta Fija Izquierda -->
+                        <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
+                            <div class="bg-montessori-red/10 p-1.5 rounded-full animate-pulse">
+                                <svg class="w-4 h-4 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-widest uppercase text-montessori-red">Avisos</span>
+                        </div>
+                        
+                        <!-- Contenedor del Texto -->
+                        <div class="marquee-wrapper w-full h-full pl-[110px]"> 
+                            <div id="marquee-track" class="marquee-content font-bold text-sm text-montessori-blue">
+                                <!-- Contenido Dinámico -->
+                            </div>
+                            <div id="marquee-track-clone" class="marquee-content font-bold text-sm text-montessori-blue" aria-hidden="true">
+                                <!-- Clon Dinámico -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- VISTA ESTUDIANTES -->
@@ -309,7 +357,7 @@
                     <div class="flex justify-between items-center mb-4 px-4">
                         <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
                         <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
-                             <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: #002060;"></div>
+                             <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
                              <span class="text-xs font-medium">Actualizando...</span>
                         </div>
                     </div>
@@ -336,8 +384,9 @@
         const appContent = document.getElementById('app-content');
         const userNameDisplay = document.getElementById('user-name-display');
         const loginError = document.getElementById('login-error');
-        const loginLoader = document.getElementById('login-loader');
         const btnLogin = document.getElementById('btn-login');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
 
         const matchWidths = () => {
             try {
@@ -357,7 +406,6 @@
             clearTimeout(inactivityTimer);
             if (loginScreen.classList.contains('hidden')) { 
                 inactivityTimer = setTimeout(() => {
-                    console.log("Sesión expirada por inactividad.");
                     logout();
                 }, SESSION_TIMEOUT_MS);
             }
@@ -375,8 +423,7 @@
             const sessionData = sessionStorage.getItem('pinceladas_session');
             if (sessionData) {
                 const session = JSON.parse(sessionData);
-                const now = new Date().getTime();
-                if (now - session.loginTime > SESSION_TIMEOUT_MS) {
+                if ((new Date().getTime() - session.loginTime) > SESSION_TIMEOUT_MS) {
                     sessionStorage.removeItem('pinceladas_session');
                 } else {
                     unlockInterface(session.name);
@@ -389,10 +436,17 @@
             e.preventDefault();
             const usernameInput = document.getElementById('username').value;
             const passwordInput = document.getElementById('password').value;
+            
+            // Reset UI
             loginError.classList.add('hidden');
-            loginLoader.classList.remove('hidden');
-            btnLogin.classList.add('opacity-75', 'cursor-not-allowed');
+            
+            // Estado de Carga
+            btnText.classList.add('opacity-0');
+            btnLoader.classList.remove('hidden');
+            
+            btnLogin.classList.add('cursor-not-allowed');
             btnLogin.disabled = true;
+
             try {
                 const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`);
                 const data = await response.json();
@@ -403,16 +457,17 @@
                         loginTime: new Date().getTime()
                     }));
                     unlockInterface(data.name);
-                    resetInactivityTimer();
                 } else {
-                    throw new Error('Error de credenciales');
+                    throw new Error('Credenciales');
                 }
             } catch (error) {
                 loginError.classList.remove('hidden');
-            } finally {
-                loginLoader.classList.add('hidden');
-                btnLogin.classList.remove('opacity-75', 'cursor-not-allowed');
+                // Restaurar botón
+                btnText.classList.remove('opacity-0');
+                btnLoader.classList.add('hidden');
+                btnLogin.classList.remove('cursor-not-allowed');
                 btnLogin.disabled = false;
+            } finally {
                 document.getElementById('password').value = '';
             }
         }
@@ -421,19 +476,57 @@
             loginScreen.classList.add('fade-out');
             setTimeout(() => {
                 loginScreen.classList.add('hidden');
-                loginScreen.classList.remove('flex'); 
-                appContent.classList.remove('hidden', 'opacity-0');
+                appContent.classList.remove('hidden');
                 appContent.classList.add('flex', 'fade-in');
                 userNameDisplay.textContent = name || 'Administración';
                 renderGrades();
-                checkSystemStatus(); 
+                checkSystemStatus();
+                loadAnnouncements(); 
                 setTimeout(matchWidths, 100); 
             }, 700); 
         }
 
+        // --- LÓGICA DE ANUNCIOS ---
+        async function loadAnnouncements() {
+            const banner = document.getElementById('announcement-banner');
+            const track1 = document.getElementById('marquee-track');
+            const track2 = document.getElementById('marquee-track-clone');
+            
+            try {
+                const response = await fetch(`${API_URL}?action=getAnnouncements`);
+                const announcements = await response.json();
+                
+                if (announcements && announcements.length > 0) {
+                    // Construir cadena con PIPE como separador
+                    const rawText = announcements.map(a => {
+                        return `<span>${a.mensaje}</span>`;
+                    }).join('<span class="mx-6 text-montessori-red/50 text-lg font-light">|</span>');
+                    
+                    // Si no hay texto real, no mostrar
+                    if(!rawText.trim()) {
+                         banner.classList.add('hidden');
+                         return;
+                    }
+
+                    // Añadimos el separador también al final
+                    const separator = '<span class="mx-6 text-montessori-red/50 text-lg font-light">|</span>';
+                    const repeatedBlock = `${rawText} ${separator} ${rawText} ${separator} ${rawText} ${separator}`;
+
+                    track1.innerHTML = repeatedBlock;
+                    track2.innerHTML = repeatedBlock; 
+                    
+                    banner.classList.remove('hidden'); 
+                } else {
+                    banner.classList.add('hidden'); 
+                }
+            } catch (e) {
+                console.error("Error anuncios", e);
+                banner.classList.add('hidden');
+            }
+        }
+
         function logout() {
             sessionStorage.removeItem('pinceladas_session');
-            sessionStorage.clear(); 
             location.reload();
         }
 
@@ -457,8 +550,9 @@
             const sContainer = document.getElementById('grid-secundaria');
             if(!pContainer || !sContainer) return; 
 
+            // Se actualizó la sombra para usar los colores sólidos corporativos (montessori-red/blue) en lugar de los tonos neón (red-300)
             const createCard = (g, color) => `
-                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border border-gray-200 rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-red-300/50' : 'hover:shadow-blue-300/50'}">
+                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border border-gray-200 rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-montessori-red/40' : 'hover:shadow-montessori-blue/40'}">
                      <div class="flex flex-col justify-between h-full relative z-10">
                         <div class="flex justify-between items-start">
                             <div>
@@ -485,8 +579,7 @@
             const dot = document.getElementById('status-dot');
             const label = document.getElementById('status-label');
             const iconBg = document.getElementById('status-icon-bg');
-            const loader = document.getElementById('connection-loader');
-            if(API_URL.includes("TU_URL")) { setOfflineStyle(); label.textContent = "Configurar URL"; return; }
+            
             try {
                 const response = await fetch(`${API_URL}?action=checkStatus&t=${new Date().getTime()}`);
                 if (response.ok) {
@@ -496,18 +589,11 @@
                         label.textContent = "En Línea"; label.classList.add('text-green-700');
                         iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
                     }
-                } else { throw new Error("API Error"); }
-            } catch (error) { setOfflineStyle(); } 
-            finally { loader.style.display = 'none'; }
-        }
-
-        function setOfflineStyle() {
-            const dot = document.getElementById('status-dot');
-            const label = document.getElementById('status-label');
-            const iconBg = document.getElementById('status-icon-bg');
-            dot.classList.remove('bg-gray-400', 'bg-green-500'); dot.classList.add('bg-red-500');
-            label.textContent = "Desconectado"; label.classList.add('text-red-700');
-            iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-red-50', 'text-red-600');
+                }
+            } catch (error) { 
+                dot.classList.add('bg-red-500');
+                label.textContent = "Offline";
+            } 
         }
 
         function showHome() {
@@ -523,47 +609,34 @@
             document.getElementById('current-grade-title').textContent = `${grade} - ${level}`;
             const listContainer = document.getElementById('students-list-container');
             const loader = document.getElementById('loading-indicator');
-            const cacheKey = `students_${grade}_${level}`;
-            const cachedData = sessionStorage.getItem(cacheKey);
-            if (cachedData) {
-                renderStudentList(JSON.parse(cachedData), listContainer, false);
-            } else {
-                 listContainer.innerHTML = '<div class="text-center py-10 text-gray-400">Consultando base de datos...</div>';
-                 loader.classList.remove('hidden');
-            }
-            if (!cachedData) {
-                try {
-                    const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
-                    const data = await response.json();
-                    sessionStorage.setItem(cacheKey, JSON.stringify(data));
-                    loader.classList.add('hidden');
-                    renderStudentList(data, listContainer, true);
-                } catch (error) {
-                    loader.classList.add('hidden');
-                    listContainer.innerHTML = `<div class="p-6 text-red-500 text-center font-medium bg-red-50 rounded-lg">Error de conexión.</div>`;
-                }
+            
+            listContainer.innerHTML = '';
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
+                const data = await response.json();
+                loader.classList.add('hidden');
+                renderStudentList(data, listContainer);
+            } catch (error) {
+                loader.classList.add('hidden');
+                listContainer.innerHTML = `<div class="text-red-500 text-center">Error de conexión.</div>`;
             }
         }
 
-        function renderStudentList(data, container, isFreshLoad) {
+        function renderStudentList(data, container) {
             if (data.length === 0) {
-                container.innerHTML = `
-                    <div class="p-12 text-center text-gray-400 flex flex-col items-center bg-white rounded-xl border border-gray-100">
-                        <h4 class="text-lg font-medium text-gray-600">Sin registros</h4>
-                        <p class="text-sm">No hay estudiantes en este grado.</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="text-center py-10 text-gray-400">Sin registros</div>`;
                 return;
             }
             container.innerHTML = data.map((student, index) => `
-                <div class="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg hover:border-montessori-blue/30 hover:shadow-sm transition-all duration-200 ${isFreshLoad ? 'fade-in' : ''}" style="${isFreshLoad ? 'animation-delay:' + (index * 50) + 'ms' : ''}">
+                <div class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg hover:border-montessori-blue/30 hover:shadow-sm transition-all fade-in">
                     <div class="flex items-center gap-4">
-                        <span class="font-bold text-gray-400 text-lg w-8 text-right group-hover:text-montessori-blue transition-colors">${index + 1}.</span>
-                        <span class="font-semibold text-gray-700 text-lg">${student.nombre}</span>
+                        <span class="font-bold text-gray-400 w-6 text-right">${index + 1}.</span>
+                        <span class="font-semibold text-gray-700">${student.nombre}</span>
                     </div>
-                    <a href="${student.link}" target="_blank" class="text-sm font-bold text-montessori-blue border border-montessori-blue px-4 py-2 rounded-lg hover:bg-montessori-blue hover:text-white transition-all flex items-center gap-2 shadow-md">
-                        <span>Boletín</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    <a href="${student.link}" target="_blank" class="text-sm font-bold text-montessori-blue border border-montessori-blue px-4 py-2 rounded-lg hover:bg-montessori-blue hover:text-white transition-all">
+                        Boletín
                     </a>
                 </div>
             `).join('');
