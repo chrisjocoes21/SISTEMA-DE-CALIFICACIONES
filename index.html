@@ -303,11 +303,14 @@
                         <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
+                <!-- HEADER PERSONALIZADO -->
                 <div class="flex items-center">
-                    <div class="text-right flex flex-col justify-center h-full"> 
-                        <p id="user-name-display" class="text-xs font-bold text-gray-700 leading-none mb-0.5">Administración</p>
-                        <button onclick="logout()" class="text-[10px] text-red-500 font-bold hover:bg-red-50 rounded transition-colors uppercase tracking-wide border border-transparent hover:border-red-100 leading-none">
-                            Cerrar Sesión
+                    <div class="text-right flex flex-col justify-center h-full items-end"> 
+                        <!-- Nombre dinámico (se rellena con JS) -->
+                        <p id="user-name-display" class="text-sm font-black text-montessori-blue leading-none mb-1 tracking-wide uppercase">...</p>
+                        <button onclick="logout()" class="text-[10px] text-red-500 font-bold hover:bg-red-50 rounded px-2 py-0.5 transition-colors uppercase tracking-wide border border-transparent hover:border-red-100 leading-none flex items-center gap-1">
+                            <span>Cerrar Sesión</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                         </button>
                     </div>
                 </div>
@@ -318,7 +321,8 @@
             
             <!-- DASHBOARD METRICS -->
             <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 fade-in">
-                <!-- [METRICS CARDS] -->
+                
+                <!-- CARD 1: Periodo -->
                 <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-blue/10 hover:border-blue-100 transition-all duration-300 group cursor-default">
                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 blur-2xl group-hover:bg-blue-100 transition-colors duration-500"></div>
                     <div class="relative flex items-center gap-4">
@@ -331,6 +335,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- CARD 2: Estado -->
                 <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-green-500/10 hover:border-green-100 transition-all duration-300 group cursor-default">
                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-green-50 rounded-full opacity-50 blur-2xl group-hover:bg-green-100 transition-colors duration-500"></div>
                     <div class="relative flex items-center gap-4">
@@ -346,18 +352,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-red/10 hover:border-red-100 transition-all duration-300 group cursor-default">
-                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-red-50 rounded-full opacity-50 blur-2xl group-hover:bg-red-100 transition-colors duration-500"></div>
+
+                <!-- CARD 3: USUARIOS ONLINE (NUEVO - REALTIME) -->
+                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-100 transition-all duration-300 group cursor-default">
+                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 blur-2xl group-hover:bg-purple-100 transition-colors duration-500"></div>
+                    
                     <div class="relative flex items-center gap-4">
-                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-red-50 text-montessori-red flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
-                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"></path></svg>
+                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
                         <div class="flex flex-col">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Soporte Técnico</p>
-                            <p class="text-lg font-black text-gray-800 leading-none">Tío Christopher</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Usuarios Online</p>
+                            <div class="flex items-center gap-2">
+                                <span id="live-users-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-sm"></span>
+                                <p id="live-users-count" class="text-lg font-black text-gray-800 leading-none">1</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- VISTA HOME (Grados) -->
@@ -458,9 +471,8 @@
 
         const gradePromises = {}; 
         let inactivityTimer;
-        
-        // Variable global para guardar el timeout del usuario actual (en milisegundos)
-        let currentUserTimeoutMs = 1.5 * 60 * 1000; // Por defecto 1.5 mins
+        let currentUserTimeoutMs = 1.5 * 60 * 1000; 
+        let statusInterval; // Para el ciclo de actualización de usuarios
 
         const matchWidths = () => {
             try {
@@ -477,7 +489,6 @@
 
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
-            // Solo activa timer si la app está visible y no hay modales bloqueantes
             if (loginScreen.classList.contains('hidden') && 
                 timeoutScreen.classList.contains('hidden')) { 
                 
@@ -500,20 +511,19 @@
             document.body.onclick = resetInactivityTimer;
             matchWidths();
             checkSessionValidity();
-            checkSystemStatus(); // Calentar conexión
+            // Lanzar un check inicial sin usuario para ver estado general
+            checkSystemStatus(); 
         };
 
         function checkSessionValidity() {
             const sessionData = sessionStorage.getItem('pinceladas_session');
             if (sessionData) {
                 const session = JSON.parse(sessionData);
-                // Verificar caducidad usando el timeout guardado en la sesión (si existe)
                 const sessionTimeout = session.timeout ? (session.timeout * 60 * 1000) : currentUserTimeoutMs;
                 
                 if ((new Date().getTime() - session.loginTime) > sessionTimeout) {
                     sessionStorage.removeItem('pinceladas_session');
                 } else {
-                    // Restaurar timeout del usuario
                     currentUserTimeoutMs = sessionTimeout;
                     skipIntro(session.name);
                     resetInactivityTimer();
@@ -553,23 +563,18 @@
                 if (data.success) {
                     updateLoginStatus('success', '¡Acceso Autorizado!');
                     
-                    // Configurar Timeout personalizado (viene en minutos, convertir a ms)
                     currentUserTimeoutMs = (data.timeout || 1.5) * 60 * 1000;
 
                     sessionStorage.setItem('pinceladas_session', JSON.stringify({
                         auth: true,
                         name: data.name,
-                        permissions: data.permissions, // Guardar permisos (String)
-                        timeout: data.timeout, // Guardar preferencia de tiempo
+                        permissions: data.permissions, 
+                        timeout: data.timeout,
                         loginTime: new Date().getTime()
                     }));
                     
-                    // Precargar solo si tiene permiso global o es admin, 
-                    // si tiene permisos restringidos, la precarga podría fallar o ser inútil, 
-                    // pero dejaremos que `prefetch` intente (la API decidirá si devuelve datos vacíos o no, 
-                    // aunque la lógica de bloqueo está aquí en el frontend).
                     prefetchGradesData();
-                    checkSystemStatus(); 
+                    checkSystemStatus(data.name); // Enviar usuario para registrar actividad
                     loadAnnouncements();
 
                     setTimeout(() => {
@@ -589,21 +594,13 @@
             }
         }
 
-        // --- GESTIÓN DE PERMISOS ---
         function checkPermissions(gradeName) {
             const sessionData = sessionStorage.getItem('pinceladas_session');
             if (!sessionData) return false;
-            
             const session = JSON.parse(sessionData);
             const userPerms = (session.permissions || "").toUpperCase().trim();
-
-            // 1. Acceso Total
             if (userPerms === 'TODO' || userPerms === 'ADMIN') return true;
-            
-            // 2. Lista específica (ej: "1º Grado, 2º Grado")
-            // Verificamos si el nombre del grado está incluido en la cadena de permisos
             if (userPerms.includes(gradeName.toUpperCase())) return true;
-
             return false;
         }
 
@@ -618,7 +615,6 @@
         function prefetchGradesData() {
             const allGrades = [...gradosPrimaria, ...gradosSecundaria];
             allGrades.forEach(g => {
-                // Solo precargar si tiene permiso para ese grado para ahorrar datos
                 if (checkPermissions(g.nombre)) {
                     const key = `${g.nombre}-${g.nivel}`;
                     gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
@@ -660,14 +656,33 @@
         }
 
         function initApp(name) {
-            userNameDisplay.textContent = name || 'Administración';
+            // Header Personalizado
+            userNameDisplay.textContent = name || 'Usuario';
+            
             renderGrades();
-            if (!document.getElementById('status-label').textContent.includes('Línea')) {
-                 checkSystemStatus();
-                 loadAnnouncements();
-            }
+            
+            // Iniciar ciclo de actualización de estado (cada 60s)
+            startStatusCycle(name);
+            
+            loadAnnouncements();
             resetInactivityTimer(); 
             setTimeout(matchWidths, 100); 
+        }
+        
+        function startStatusCycle(username) {
+            // Primera llamada inmediata con usuario
+            checkSystemStatus(username);
+            
+            // Limpiar intervalo anterior si existe
+            if (statusInterval) clearInterval(statusInterval);
+            
+            // Configurar nuevo intervalo
+            statusInterval = setInterval(() => {
+                // Solo ejecutar si la app está visible
+                if (!document.hidden) {
+                    checkSystemStatus(username);
+                }
+            }, 60000); // Cada minuto
         }
 
         async function loadAnnouncements() {
@@ -746,18 +761,44 @@
             sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue')).join('');
         }
 
-        async function checkSystemStatus() {
+        // --- ACTUALIZACIÓN DE ESTADO Y USUARIOS ONLINE ---
+        async function checkSystemStatus(username = null) {
             const dot = document.getElementById('status-dot');
             const label = document.getElementById('status-label');
             const iconBg = document.getElementById('status-icon-bg');
+            
+            // Elementos de la tarjeta Usuarios Online
+            const liveCount = document.getElementById('live-users-count');
+            const liveDot = document.getElementById('live-users-dot');
+            
+            let url = `${API_URL}?action=checkStatus&t=${new Date().getTime()}`;
+            if (username) url += `&username=${encodeURIComponent(username)}`;
+
             try {
-                const response = await fetch(`${API_URL}?action=checkStatus&t=${new Date().getTime()}`);
+                const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json();
+                    
+                    // Actualizar Estado Sistema
                     if(data.status === 'online') {
                         dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
                         label.textContent = "En Línea"; label.classList.add('text-green-700');
                         iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
+                    }
+                    
+                    // Actualizar Contador Usuarios
+                    if (data.activeUsers !== undefined) {
+                        liveCount.textContent = data.activeUsers;
+                        
+                        // Cambiar color del punto según carga
+                        liveDot.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500');
+                        if (data.activeUsers < 5) {
+                            liveDot.classList.add('bg-green-500');
+                        } else if (data.activeUsers < 15) {
+                            liveDot.classList.add('bg-yellow-500');
+                        } else {
+                            liveDot.classList.add('bg-red-500');
+                        }
                     }
                 }
             } catch (error) { 
@@ -772,19 +813,15 @@
         }
 
         async function loadStudents(grade, level) {
-            // 1. VERIFICAR PERMISOS ANTES DE HACER NADA
             if (!checkPermissions(grade)) {
-                // Mostrar Modal de Acceso Denegado
                 accessDeniedModal.classList.remove('hidden');
-                // Pequeño timeout para permitir la transición de opacidad
                 setTimeout(() => {
                     accessDeniedModal.classList.remove('opacity-0');
                     accessDeniedModal.classList.add('opacity-100');
                 }, 10);
-                return; // DETENER EJECUCIÓN
+                return; 
             }
 
-            // Si tiene permisos, proceder normalmente
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('dashboard-metrics').classList.add('hidden');
             document.getElementById('view-students').classList.remove('hidden');
