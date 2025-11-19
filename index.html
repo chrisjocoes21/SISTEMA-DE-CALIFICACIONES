@@ -35,6 +35,9 @@
                             red: '#C00000'
                         }
                     },
+                    boxShadow: {
+                        'card-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                    },
                     animation: {
                         'blob': 'blob 15s infinite',
                     },
@@ -54,44 +57,43 @@
     <style>
         /* --- CORE LAYOUT --- */
         body { 
-            background-color: #F8FAFC; 
+            background-color: #ffffff; /* Fondo base blanco para limpieza */
             height: 100vh; 
             overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
         
-        /* Main ahora ocupa el ancho completo sin centrado forzado */
         main {
             flex: 1;
             overflow-y: auto; 
             display: flex;
             flex-direction: column;
-            padding: 1rem; 
+            padding: 1.5rem; /* Un poco más de espacio */
             width: 100%;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* --- ANIMACIÓN DEL BANNER INFINITO (Seamless) --- */
+        /* --- MARQUEE --- */
         .marquee-wrapper {
             display: flex;
             overflow: hidden;
             user-select: none;
             mask-image: linear-gradient(to right, transparent 0%, black 0%, black 95%, transparent 100%);
-            align-items: center; /* Asegura centrado vertical del contenedor padre */
+            align-items: center; 
         }
 
         .marquee-content {
             flex-shrink: 0;
             display: flex;
-            align-items: center; /* Asegura centrado vertical de los items */
+            align-items: center; 
             justify-content: space-around;
             min-width: 100%;
             gap: 0; 
             animation: scroll-seamless 40s linear infinite; 
-            height: 100%; /* Ocupa toda la altura para centrar bien */
+            height: 100%; 
         }
 
         @keyframes scroll-seamless {
@@ -99,7 +101,7 @@
             to { transform: translateX(-100%); }
         }
 
-        /* --- ANIMACIÓN COLOR PULSE --- */
+        /* --- ANIMACIONES GENERALES --- */
         @keyframes colorPulse { 
             0% { color: #9CA3AF; } 
             25% { color: #C00000; } 
@@ -109,7 +111,7 @@
         }
         .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
 
-        /* --- LOADER --- */
+        /* Loader */
         .loader {
             border: 3px solid rgba(255,255,255,0.3); 
             border-radius: 50%; 
@@ -120,13 +122,12 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Transiciones */
         .fade-out { animation: fadeOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fadeOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(2px); pointer-events: none; } }
         @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
 
-        /* --- ESTILOS DEL LOGO (Variables Unificadas) --- */
+        /* --- LOGO --- */
         :root { --logo-blue: #002060; --logo-red: #C00000; }
         
         .text-colegio {
@@ -165,14 +166,6 @@
         .logo-sm .text-colegio { font-size: 0.55rem; }
         .logo-sm .text-pinceladas { font-size: 1.3rem; }
         .logo-sm .text-montessori-sub { font-size: 0.55rem; padding: 1px 4px; }
-        
-        .group-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%; 
-            padding: 1rem; 
-        }
     </style>
 </head>
 <body class="text-slate-800 font-sans">
@@ -181,28 +174,19 @@
     <!-- PANTALLA DE LOGIN -->
     <!-- ================================ -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
-        
-        <!-- Fondo animado -->
         <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
         </div>
 
-        <!-- Contenedor de la frase inspiradora (Oculto inicialmente) -->
         <div id="quote-container" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
-            <!-- Quitada la clase animate-pulse -->
-            <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montessori drop-shadow-sm mb-4">
-                <!-- Frase inyectada por JS -->
-            </h2>
+            <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montessori drop-shadow-sm mb-4"></h2>
             <div class="h-1 w-24 bg-montessori-red rounded-full mx-auto"></div>
         </div>
 
-        <!-- Tarjeta de Login Horizontal y Compacta -->
         <div id="login-card" class="relative z-10 w-full max-w-3xl mx-4 transition-all duration-700">
             <div class="bg-white/90 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[380px]">
-                
-                <!-- Lado Izquierdo: Branding (Gris Claro) -->
                 <div class="w-full md:w-5/12 bg-gray-50/80 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-gray-100 gap-4">
                     <div class="logo-container logo-lg cursor-default text-center transform scale-90 md:scale-100">
                         <div class="text-section flex flex-col items-center">
@@ -211,12 +195,9 @@
                             <div class="text-montessori-sub">MONTESSORI</div>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-400 font-medium text-center hidden md:block mt-2">
-                        Sistema de Gestión Académica
-                    </p>
+                    <p class="text-xs text-gray-400 font-medium text-center hidden md:block mt-2">Sistema de Gestión Académica</p>
                 </div>
 
-                <!-- Lado Derecho: Formulario -->
                 <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col justify-center">
                     <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4" autocomplete="off">
                         <div>
@@ -237,17 +218,14 @@
                             </div>
                         </div>
                         
-                        <!-- ÁREA DE MENSAJES DE ESTADO (FEEDBACK MEJORADO) -->
                         <div id="login-status-container" class="min-h-[40px] transition-all duration-300 rounded-lg flex items-center justify-center gap-2 border border-transparent text-center px-2 py-1 bg-gray-50">
                              <span id="login-status-text" class="text-xs font-medium text-gray-400">Ingrese sus credenciales para continuar</span>
                         </div>
                         
-                        <!-- BOTÓN DE LOGIN -->
                         <button type="submit" id="btn-login" class="relative w-full bg-montessori-blue text-white font-bold text-sm py-3 rounded-lg shadow-lg shadow-montessori-blue/30 hover:bg-montessori-blue hover:shadow-montessori-blue/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex justify-center items-center">
                             <span id="btn-text">Iniciar Sesión</span>
                             <div id="btn-loader" class="loader hidden absolute w-5 h-5 border-2"></div>
                         </button>
-                        
                     </form>
                     <div class="mt-4 text-center">
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gestion.educativa.pinceladas@gmail.com" target="_blank" class="text-[10px] text-gray-400 hover:text-montessori-blue transition-colors font-medium inline-flex items-center gap-1">
@@ -308,8 +286,8 @@
     <div id="app-content" class="hidden flex-col h-full w-full bg-white opacity-0 transition-opacity duration-1000">
         
         <!-- HEADER -->
-        <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm h-14 flex-shrink-0 w-full">
-            <div class="w-full px-4 h-full flex justify-between items-center">
+        <header class="bg-white border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
+            <div class="w-full px-4 h-full flex justify-between items-center max-w-[1440px] mx-auto">
                 <div class="logo-container logo-sm cursor-pointer hover:opacity-90 transition-opacity" onclick="showHome()">
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
@@ -317,7 +295,7 @@
                         <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
-                <!-- HEADER PERSONALIZADO ALINEADO ESTILO IMAGEN -->
+                <!-- HEADER PERSONALIZADO -->
                 <div class="flex items-center h-full">
                     <!-- Info Usuario -->
                     <div class="flex flex-col items-end mr-4">
@@ -328,10 +306,10 @@
                     <!-- Separador Vertical -->
                     <div class="h-6 w-px bg-gray-200 mx-1"></div>
 
-                    <!-- Botón Salir (Estilo Rojizo) -->
-                    <button onclick="logout()" class="ml-4 bg-red-50 hover:bg-red-100 text-red-500 font-bold text-sm px-4 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-2 group border border-transparent hover:border-red-200">
-                        <span>Salir</span>
-                        <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Botón Salir -->
+                    <button onclick="logout()" class="ml-4 bg-red-50 hover:bg-red-100 text-red-500 font-bold text-xs px-3 py-1.5 rounded transition-all duration-200 flex items-center gap-2 group border border-transparent hover:border-red-200 uppercase tracking-wide">
+                        <span>Cerrar Sesión</span>
+                        <svg class="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                         </svg>
                     </button>
@@ -339,128 +317,119 @@
             </div>
         </header>
 
-        <!-- MAIN: Se quitó max-w-6xl y mx-auto para permitir full width real en estudiantes -->
-        <main class="flex-1 w-full px-4 py-4 no-scrollbar overflow-y-auto">
+        <!-- MAIN -->
+        <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
-            <!-- DASHBOARD METRICS: Centrado y contenido para que no se deforme -->
-            <div id="dashboard-metrics" class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 fade-in">
-                
-                <!-- CARD 1: Periodo -->
-                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-blue/10 hover:border-blue-100 transition-all duration-300 group cursor-default">
-                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 blur-2xl group-hover:bg-blue-100 transition-colors duration-500"></div>
-                    <div class="relative flex items-center gap-4">
-                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-blue-50 text-montessori-blue flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+            <div class="max-w-[1440px] mx-auto w-full">
+                <!-- DASHBOARD METRICS: DISEÑO CLEAN / FLAT (REFERENCIA IMAGEN) -->
+                <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
+                    
+                    <!-- CARD 1: Periodo (Estilo Azul Clean) -->
+                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
+                        <div class="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <div class="flex flex-col">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Periodo</p>
-                            <p class="text-lg font-black text-gray-800 leading-none">2025 - 2026</p>
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Periodo</p>
+                            <p class="text-xl font-bold text-gray-800 leading-tight">2025 - 2026</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- CARD 2: Estado -->
-                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-green-500/10 hover:border-green-100 transition-all duration-300 group cursor-default">
-                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-green-50 rounded-full opacity-50 blur-2xl group-hover:bg-green-100 transition-colors duration-500"></div>
-                    <div class="relative flex items-center gap-4">
-                        <div id="status-icon-bg" class="flex-shrink-0 h-12 w-12 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center shadow-sm transition-colors duration-300 group-hover:scale-105">
+                    <!-- CARD 2: Estado (Estilo Verde Clean) -->
+                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
+                        <div id="status-icon-bg" class="h-12 w-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center transition-colors">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
-                        <div class="flex flex-col">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Estado</p>
-                            <div id="status-text-container" class="flex items-center gap-2">
-                                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-gray-400 animate-pulse shadow-sm"></span> 
-                                <span id="status-label" class="text-lg font-black text-gray-600 leading-none">...</span>
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estado</p>
+                            <div class="flex items-center gap-2">
+                                <span id="status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> 
+                                <span id="status-label" class="text-xl font-bold text-gray-800 leading-tight">...</span>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- CARD 3: USUARIOS ONLINE (NUEVO - REALTIME) -->
-                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-100 transition-all duration-300 group cursor-default">
-                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 blur-2xl group-hover:bg-purple-100 transition-colors duration-500"></div>
-                    
-                    <div class="relative flex items-center gap-4">
-                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <!-- CARD 3: Usuarios (Estilo Violeta Clean) -->
+                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
+                        <div class="h-12 w-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <div class="flex flex-col">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Usuarios Online</p>
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Usuarios Online</p>
                             <div class="flex items-center gap-2">
-                                <span id="live-users-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-sm"></span>
-                                <p id="live-users-count" class="text-lg font-black text-gray-800 leading-none">1</p>
+                                <span id="live-users-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <p id="live-users-count" class="text-xl font-bold text-gray-800 leading-tight">1</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
+                <!-- VISTA HOME: LISTADO GRADOS -->
+                <div id="view-home" class="fade-in h-full flex flex-col pb-8 w-full">
+                    
+                    <!-- Primaria -->
+                    <div class="flex items-center gap-3 mb-4 pb-1">
+                        <div class="h-6 w-1.5 bg-montessori-red rounded-full"></div>
+                        <h2 class="text-lg font-bold text-montessori-red">Nivel Primaria</h2>
+                    </div>
+                    <!-- Grid Primaria: Diseño Outline Red -->
+                    <div id="grid-primaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"></div>
 
-            <!-- VISTA HOME: Centrado y contenido -->
-            <div id="view-home" class="fade-in h-full flex flex-col pb-8 w-full max-w-6xl mx-auto">
-                
-                <!-- Primaria -->
-                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-1">
-                    <div class="h-5 w-1 bg-montessori-red rounded-full"></div>
-                    <h2 class="text-lg font-bold text-montessori-red">Nivel Primaria</h2>
-                </div>
-                <div id="grid-primaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
+                    <!-- Secundaria -->
+                    <div class="flex items-center gap-3 mb-4 pb-1">
+                        <div class="h-6 w-1.5 bg-montessori-blue rounded-full"></div>
+                        <h2 class="text-lg font-bold text-montessori-blue">Nivel Secundaria</h2>
+                    </div>
+                    <!-- Grid Secundaria: Diseño Outline Blue -->
+                    <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-                <!-- Secundaria -->
-                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-1">
-                    <div class="h-5 w-1 bg-montessori-blue rounded-full"></div>
-                    <h2 class="text-lg font-bold text-montessori-blue">Nivel Secundaria</h2>
-                </div>
-                <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-
-                <!-- BANNER DE ANUNCIOS -->
-                <div id="announcement-banner" class="hidden mt-6 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white max-w-full mx-auto">
-                    <div class="flex items-center relative h-12">
-                        <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
-                            <div class="bg-montessori-red/10 p-1.5 rounded-full animate-pulse">
-                                <svg class="w-4 h-4 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-                                </svg>
+                    <!-- BANNER DE ANUNCIOS -->
+                    <div id="announcement-banner" class="hidden mt-8 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white w-full">
+                        <div class="flex items-center relative h-12">
+                            <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
+                                <div class="bg-montessori-red/10 p-1.5 rounded-full animate-pulse">
+                                    <svg class="w-4 h-4 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-bold tracking-widest uppercase text-montessori-red">Avisos</span>
                             </div>
-                            <span class="text-xs font-bold tracking-widest uppercase text-montessori-red">Avisos</span>
-                        </div>
-                        <div class="marquee-wrapper w-full h-full pl-[110px]"> 
-                            <div id="marquee-track" class="marquee-content font-bold text-sm text-montessori-blue"></div>
-                            <div id="marquee-track-clone" class="marquee-content font-bold text-sm text-montessori-blue" aria-hidden="true"></div>
+                            <div class="marquee-wrapper w-full h-full pl-[110px]"> 
+                                <div id="marquee-track" class="marquee-content font-bold text-sm text-montessori-blue"></div>
+                                <div id="marquee-track-clone" class="marquee-content font-bold text-sm text-montessori-blue" aria-hidden="true"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- VISTA ESTUDIANTES: Full width (sin max-w ni mx-auto) para pegar al borde izquierdo -->
-            <div id="view-students" class="hidden fade-in w-full">
-                <!-- Breadcrumb alineado a la izquierda sin centrado forzado -->
-                <div class="flex items-center gap-2 mb-4 text-sm text-gray-500">
-                    <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        Volver a Grados
-                    </button>
-                    <span>/</span>
-                    <span id="current-grade-title" class="font-bold text-montessori-blue">...</span>
-                </div>
-                
-                <!-- Contenedor de lista aprovechando el ancho completo (sin mx-auto) -->
-                <div class="w-full">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
-                        <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
-                             <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
-                             <span class="text-xs font-medium">Actualizando...</span>
-                        </div>
+                <!-- VISTA ESTUDIANTES -->
+                <div id="view-students" class="hidden fade-in w-full">
+                    <div class="flex items-center gap-2 mb-6 text-sm text-gray-500">
+                        <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Volver a Grados
+                        </button>
+                        <span>/</span>
+                        <span id="current-grade-title" class="font-bold text-montessori-blue">...</span>
                     </div>
-                    <div id="students-list-container" class="space-y-2"></div>
+                    
+                    <div class="w-full">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
+                            <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
+                                 <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
+                                 <span class="text-xs font-medium">Actualizando...</span>
+                            </div>
+                        </div>
+                        <div id="students-list-container" class="space-y-2"></div>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <footer class="bg-white border-t border-gray-200 py-4 mt-auto flex-shrink-0 w-full z-10">
-            <div class="text-center text-[10px] sm:text-xs">
-                <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:underline" title="Visitar Portafolio">
+        <footer class="bg-white border-t border-gray-200 py-6 mt-auto flex-shrink-0 w-full z-10">
+            <div class="text-center text-[10px] sm:text-xs text-gray-400">
+                <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:text-montessori-blue hover:underline" title="Visitar Portafolio">
                     © 2025 Sistema de Calificaciones - Desarrollado por Didac-Click Group.
                 </a>
             </div>
@@ -498,7 +467,7 @@
         const gradePromises = {}; 
         let inactivityTimer;
         let currentUserTimeoutMs = 1.5 * 60 * 1000; 
-        let statusInterval; // Para el ciclo de actualización de usuarios
+        let statusInterval; 
 
         const matchWidths = () => {
             try {
@@ -527,14 +496,11 @@
         function handleSessionTimeout() {
             sessionStorage.removeItem('pinceladas_session');
             timeoutScreen.classList.remove('hidden');
-            
-            // Animación optimizada con requestAnimationFrame para suavidad
             requestAnimationFrame(() => {
                  timeoutScreen.classList.remove('opacity-0');
                  document.getElementById('timeout-content').classList.remove('scale-95');
                  document.getElementById('timeout-content').classList.add('scale-100');
             });
-            
             appContent.classList.add('blur-sm');
         }
 
@@ -544,7 +510,6 @@
             document.body.onclick = resetInactivityTimer;
             matchWidths();
             checkSessionValidity();
-            // Lanzar un check inicial sin usuario para ver estado general
             checkSystemStatus(); 
         };
 
@@ -565,10 +530,8 @@
         }
 
         function updateLoginStatus(status, message) {
-            // Limpieza de clases
             loginStatusContainer.className = 'min-h-[40px] transition-all duration-300 rounded-lg flex items-center justify-center gap-2 border px-2 py-1';
             loginStatusText.className = 'text-xs font-bold';
-
             loginStatusText.textContent = message;
             
             if (status === 'error') {
@@ -581,7 +544,6 @@
                 loginStatusContainer.classList.add('bg-blue-50', 'border-blue-200');
                 loginStatusText.classList.add('text-blue-600');
             } else {
-                // Estado Default
                  loginStatusContainer.classList.add('bg-gray-50', 'border-transparent');
                  loginStatusText.classList.add('text-gray-400', 'font-medium');
             }
@@ -604,9 +566,7 @@
                 
                 if (data.success) {
                     updateLoginStatus('success', '¡Acceso Autorizado! Redirigiendo...');
-                    
                     currentUserTimeoutMs = (data.timeout || 1.5) * 60 * 1000;
-
                     sessionStorage.setItem('pinceladas_session', JSON.stringify({
                         auth: true,
                         name: data.name,
@@ -614,11 +574,9 @@
                         timeout: data.timeout,
                         loginTime: new Date().getTime()
                     }));
-                    
                     prefetchGradesData();
-                    checkSystemStatus(data.name); // Enviar usuario para registrar actividad
+                    checkSystemStatus(data.name); 
                     loadAnnouncements();
-
                     setTimeout(() => {
                         unlockInterface(data.name);
                     }, 800);
@@ -631,7 +589,6 @@
                 btnLoader.classList.add('hidden');
                 btnLogin.classList.remove('cursor-not-allowed');
                 btnLogin.disabled = false;
-                // Vibrar si es móvil
                 if (navigator.vibrate) navigator.vibrate(200);
             } finally {
                 document.getElementById('password').value = '';
@@ -696,37 +653,26 @@
                     appContent.classList.add('flex', 'fade-in');
                     initApp(name);
                 }, 500); 
-            }, 4000); // AUMENTADO A 4000ms (4 segundos) para mayor lectura
+            }, 4000); 
         }
 
         function initApp(name) {
-            // Header Personalizado
             userNameDisplay.textContent = name || 'Usuario';
-            
             renderGrades();
-            
-            // Iniciar ciclo de actualización de estado (cada 60s)
             startStatusCycle(name);
-            
             loadAnnouncements();
             resetInactivityTimer(); 
             setTimeout(matchWidths, 100); 
         }
         
         function startStatusCycle(username) {
-            // Primera llamada inmediata con usuario
             checkSystemStatus(username);
-            
-            // Limpiar intervalo anterior si existe
             if (statusInterval) clearInterval(statusInterval);
-            
-            // Configurar nuevo intervalo
             statusInterval = setInterval(() => {
-                // Solo ejecutar si la app está visible
                 if (!document.hidden) {
                     checkSystemStatus(username);
                 }
-            }, 60000); // Cada minuto
+            }, 60000); 
         }
 
         async function loadAnnouncements() {
@@ -782,36 +728,28 @@
             const sContainer = document.getElementById('grid-secundaria');
             if(!pContainer || !sContainer) return; 
 
-            const createCard = (g, color) => `
-                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border-2 ${color === 'red' ? 'border-montessori-red' : 'border-montessori-blue'} rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-montessori-red/40' : 'hover:shadow-montessori-blue/40'}">
-                     <div class="flex flex-col justify-between h-full relative z-10">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Grado</p>
-                                <h3 class="text-xl font-bold text-gray-800">${g.nombre}</h3>
-                            </div>
-                            <div class="h-9 w-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-base shadow-sm transition-colors ${color === 'red' ? 'group-hover:text-montessori-red group-hover:bg-red-50' : 'group-hover:text-montessori-blue group-hover:bg-blue-50'}">
-                                ${g.icon}
-                            </div>
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-gray-100/50"></div>
+            const createCard = (g, colorClass, borderClass) => `
+                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer bg-white border ${borderClass} rounded-xl p-6 flex justify-between items-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                     <div>
+                        <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">Grado</p>
+                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-black transition-colors">${g.nombre}</h3>
                      </div>
-                     <div class="absolute -bottom-6 -right-6 text-gray-50 opacity-0 group-hover:opacity-20 transform rotate-12 scale-150 pointer-events-none font-black text-6xl transition-opacity duration-300">
+                     <div class="h-10 w-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 font-bold text-lg group-hover:bg-${colorClass === 'red' ? 'red' : 'blue'}-50 group-hover:text-${colorClass === 'red' ? 'montessori-red' : 'montessori-blue'} transition-colors">
                         ${g.icon}
                      </div>
                 </div>
             `;
-            pContainer.innerHTML = gradosPrimaria.map(g => createCard(g, 'red')).join('');
-            sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue')).join('');
+            
+            // Primaria: Borde Rojo
+            pContainer.innerHTML = gradosPrimaria.map(g => createCard(g, 'red', 'border-montessori-red')).join('');
+            // Secundaria: Borde Azul
+            sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue', 'border-montessori-blue')).join('');
         }
 
-        // --- ACTUALIZACIÓN DE ESTADO Y USUARIOS ONLINE ---
         async function checkSystemStatus(username = null) {
             const dot = document.getElementById('status-dot');
             const label = document.getElementById('status-label');
             const iconBg = document.getElementById('status-icon-bg');
-            
-            // Elementos de la tarjeta Usuarios Online
             const liveCount = document.getElementById('live-users-count');
             const liveDot = document.getElementById('live-users-dot');
             
@@ -823,18 +761,14 @@
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // Actualizar Estado Sistema
                     if(data.status === 'online') {
                         dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
                         label.textContent = "En Línea"; label.classList.add('text-green-700');
                         iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
                     }
                     
-                    // Actualizar Contador Usuarios
                     if (data.activeUsers !== undefined) {
                         liveCount.textContent = data.activeUsers;
-                        
-                        // Cambiar color del punto según carga
                         liveDot.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500');
                         if (data.activeUsers < 5) {
                             liveDot.classList.add('bg-green-500');
@@ -869,7 +803,12 @@
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('dashboard-metrics').classList.add('hidden');
             document.getElementById('view-students').classList.remove('hidden');
-            document.getElementById('current-grade-title').textContent = `${grade} - ${level}`;
+            
+            // Cambio de color dinámico según el nivel (Rojo para Primaria, Azul para Secundaria)
+            const titleEl = document.getElementById('current-grade-title');
+            titleEl.textContent = `${grade} - ${level}`;
+            titleEl.className = `font-bold ${level === 'Primaria' ? 'text-montessori-red' : 'text-montessori-blue'}`;
+
             const listContainer = document.getElementById('students-list-container');
             const loader = document.getElementById('loading-indicator');
             listContainer.innerHTML = '';
