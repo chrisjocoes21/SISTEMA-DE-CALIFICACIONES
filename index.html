@@ -119,8 +119,8 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* Transiciones */
-        .fade-out { animation: fadeOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .fade-out { animation: fadeOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes fadeOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(2px); pointer-events: none; } }
         @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
 
@@ -180,14 +180,24 @@
     <!-- ================================ -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
         
+        <!-- Fondo animado -->
         <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
         </div>
 
-        <div class="relative z-10 w-full max-w-md p-6 mx-4">
-            <div class="bg-white/80 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+        <!-- Contenedor de la frase inspiradora (Oculto inicialmente) -->
+        <div id="quote-container" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
+            <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montessori drop-shadow-sm mb-4 animate-pulse">
+                <!-- Frase inyectada por JS -->
+            </h2>
+            <div class="h-1 w-24 bg-montessori-red rounded-full mx-auto"></div>
+        </div>
+
+        <!-- Tarjeta de Login con Altura Fija -->
+        <div id="login-card" class="relative z-10 w-full max-w-md mx-4 transition-all duration-700">
+            <div class="bg-white/80 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center justify-center min-h-[580px]">
                 <div class="logo-container logo-lg cursor-default text-center mb-8">
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
@@ -210,7 +220,9 @@
                             </div>
                             <input type="password" id="password" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-300 font-medium text-sm placeholder-gray-400" placeholder="Contraseña" autocomplete="new-password">
                         </div>
-                        <div id="login-error" class="hidden p-3 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center gap-2 animate-pulse">
+                        
+                        <!-- Mensaje de error: Espacio reservado pero invisible (opacity-0) para evitar saltos -->
+                        <div id="login-error" class="opacity-0 pointer-events-none h-12 transition-opacity duration-200 p-3 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center gap-2">
                             <span class="text-xs text-red-600 font-bold">Credenciales incorrectas</span>
                         </div>
                         
@@ -228,6 +240,24 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ================================ -->
+    <!-- PANTALLA DE TIMEOUT (INACTIVIDAD) -->
+    <!-- ================================ -->
+    <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-white/90 backdrop-blur-sm transition-opacity duration-500">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 max-w-sm w-full text-center transform scale-100 transition-transform mx-4">
+            <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-red-50/50">
+                <svg class="w-10 h-10 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Sesión Expirada</h3>
+            <p class="text-gray-500 text-sm mb-8 leading-relaxed">Por motivos de seguridad, tu sesión se ha cerrado automáticamente debido a inactividad.</p>
+            <button onclick="location.reload()" class="w-full bg-montessori-blue text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-800 hover:shadow-montessori-blue/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0">
+                Volver a Acceder
+            </button>
         </div>
     </div>
 
@@ -259,39 +289,46 @@
 
         <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-4 no-scrollbar overflow-y-auto">
             
-            <!-- DASHBOARD METRICS -->
-            <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 fade-in">
-                <!-- Periodo -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
-                    <div class="p-2 bg-blue-50 text-montessori-blue rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Periodo</p>
-                        <p class="text-sm font-bold text-gray-800">2025 - 2026</p>
-                    </div>
-                </div>
-                <!-- Estado -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 relative overflow-hidden hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
-                    <div id="status-icon-bg" class="p-2 bg-gray-100 text-gray-400 rounded-lg transition-colors duration-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Estado</p>
-                        <p id="status-text-container" class="text-sm font-bold text-gray-600 flex items-center gap-2 transition-colors duration-300">
-                            <span id="status-dot" class="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></span> 
-                            <span id="status-label">...</span>
-                        </p>
+            <!-- DASHBOARD METRICS (REDISEÑADO) -->
+            <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 fade-in">
+                <!-- [METRICS CARDS IGUALES AL ANTERIOR] -->
+                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-blue/10 hover:border-blue-100 transition-all duration-300 group cursor-default">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 blur-2xl group-hover:bg-blue-100 transition-colors duration-500"></div>
+                    <div class="relative flex items-center gap-4">
+                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-blue-50 text-montessori-blue flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Periodo</p>
+                            <p class="text-lg font-black text-gray-800 leading-none">2025 - 2026</p>
+                        </div>
                     </div>
                 </div>
-                <!-- Soporte -->
-                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:shadow-montessori-blue/10 hover:border-gray-100 transition-all duration-300">
-                    <div class="p-2 bg-red-50 text-montessori-red rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-5 4h4a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-green-500/10 hover:border-green-100 transition-all duration-300 group cursor-default">
+                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-green-50 rounded-full opacity-50 blur-2xl group-hover:bg-green-100 transition-colors duration-500"></div>
+                    <div class="relative flex items-center gap-4">
+                        <div id="status-icon-bg" class="flex-shrink-0 h-12 w-12 rounded-2xl bg-gray-100 text-gray-400 flex items-center justify-center shadow-sm transition-colors duration-300 group-hover:scale-105">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Estado</p>
+                            <div id="status-text-container" class="flex items-center gap-2">
+                                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-gray-400 animate-pulse shadow-sm"></span> 
+                                <span id="status-label" class="text-lg font-black text-gray-600 leading-none">...</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Soporte Técnico</p>
-                        <p class="text-sm font-bold text-gray-800">Tío Christopher</p>
+                </div>
+                <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-red/10 hover:border-red-100 transition-all duration-300 group cursor-default">
+                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-red-50 rounded-full opacity-50 blur-2xl group-hover:bg-red-100 transition-colors duration-500"></div>
+                    <div class="relative flex items-center gap-4">
+                        <div class="flex-shrink-0 h-12 w-12 rounded-2xl bg-red-50 text-montessori-red flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Soporte Técnico</p>
+                            <p class="text-lg font-black text-gray-800 leading-none">Tío Christopher</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -318,8 +355,6 @@
                 <!-- ================================ -->
                 <div id="announcement-banner" class="hidden mt-6 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white max-w-full mx-auto">
                     <div class="flex items-center relative h-12">
-                        
-                        <!-- Etiqueta Fija Izquierda -->
                         <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
                             <div class="bg-montessori-red/10 p-1.5 rounded-full animate-pulse">
                                 <svg class="w-4 h-4 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,19 +363,12 @@
                             </div>
                             <span class="text-xs font-bold tracking-widest uppercase text-montessori-red">Avisos</span>
                         </div>
-                        
-                        <!-- Contenedor del Texto -->
                         <div class="marquee-wrapper w-full h-full pl-[110px]"> 
-                            <div id="marquee-track" class="marquee-content font-bold text-sm text-montessori-blue">
-                                <!-- Contenido Dinámico -->
-                            </div>
-                            <div id="marquee-track-clone" class="marquee-content font-bold text-sm text-montessori-blue" aria-hidden="true">
-                                <!-- Clon Dinámico -->
-                            </div>
+                            <div id="marquee-track" class="marquee-content font-bold text-sm text-montessori-blue"></div>
+                            <div id="marquee-track-clone" class="marquee-content font-bold text-sm text-montessori-blue" aria-hidden="true"></div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- VISTA ESTUDIANTES -->
@@ -366,7 +394,6 @@
             </div>
         </main>
 
-        <!-- FOOTER -->
         <footer class="bg-white border-t border-gray-200 py-4 mt-auto flex-shrink-0 w-full z-10">
             <div class="text-center text-[10px] sm:text-xs">
                 <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:underline" title="Visitar Portafolio">
@@ -378,15 +405,31 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwnNusWP5LlxipynwTszW7bz70GNZa4n3RfEm-8tsM7nFktVeNvXATqz8HddKY_2YK9/exec"; 
-        const SESSION_TIMEOUT_MS = 15 * 60 * 1000; 
+        const SESSION_TIMEOUT_MS = 1.5 * 60 * 1000; // 1.5 MINUTOS
 
         const loginScreen = document.getElementById('login-screen');
+        const loginCard = document.getElementById('login-card');
+        const quoteContainer = document.getElementById('quote-container');
+        const quoteText = document.getElementById('quote-text');
         const appContent = document.getElementById('app-content');
         const userNameDisplay = document.getElementById('user-name-display');
         const loginError = document.getElementById('login-error');
         const btnLogin = document.getElementById('btn-login');
         const btnText = document.getElementById('btn-text');
         const btnLoader = document.getElementById('btn-loader');
+        const timeoutScreen = document.getElementById('timeout-screen');
+
+        const quotes = [
+            "Lo más importante es que lo más importante sea lo más importante.",
+            "Empieza cada día con un fin en mente.",
+            "Busca primero entender, para luego ser entendido.",
+            "La mejor forma de predecir tu futuro es creándolo.",
+            "Sinergiza: El todo es más grande que la suma de sus partes.",
+            "Sé proactivo: Tú eres el arquitecto de tu destino.",
+            "Afila la sierra: Nunca dejes de aprender y crecer."
+        ];
+
+        const gradePromises = {}; 
 
         const matchWidths = () => {
             try {
@@ -402,13 +445,21 @@
         window.addEventListener('resize', matchWidths);
 
         let inactivityTimer;
+        
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
-            if (loginScreen.classList.contains('hidden')) { 
+            if (loginScreen.classList.contains('hidden') && timeoutScreen.classList.contains('hidden')) { 
                 inactivityTimer = setTimeout(() => {
-                    logout();
+                    handleSessionTimeout();
                 }, SESSION_TIMEOUT_MS);
             }
+        }
+
+        function handleSessionTimeout() {
+            sessionStorage.removeItem('pinceladas_session');
+            timeoutScreen.classList.remove('hidden');
+            timeoutScreen.classList.add('fade-in');
+            appContent.classList.add('blur-sm');
         }
 
         window.onload = () => {
@@ -417,6 +468,8 @@
             document.body.onclick = resetInactivityTimer;
             matchWidths();
             checkSessionValidity();
+            // Lanzar checkStatus anticipado para "calentar" la conexión si es posible
+            checkSystemStatus();
         };
 
         function checkSessionValidity() {
@@ -426,7 +479,7 @@
                 if ((new Date().getTime() - session.loginTime) > SESSION_TIMEOUT_MS) {
                     sessionStorage.removeItem('pinceladas_session');
                 } else {
-                    unlockInterface(session.name);
+                    skipIntro(session.name);
                     resetInactivityTimer();
                 }
             }
@@ -437,10 +490,10 @@
             const usernameInput = document.getElementById('username').value;
             const passwordInput = document.getElementById('password').value;
             
-            // Reset UI
-            loginError.classList.add('hidden');
+            // LOGIN ERROR: Se mantiene visible en DOM (opacity-0) para no saltar
+            loginError.classList.remove('opacity-100'); 
+            loginError.classList.add('opacity-0');
             
-            // Estado de Carga
             btnText.classList.add('opacity-0');
             btnLoader.classList.remove('hidden');
             
@@ -456,13 +509,20 @@
                         name: data.name,
                         loginTime: new Date().getTime()
                     }));
+                    
+                    prefetchGradesData();
+                    checkSystemStatus(); 
+                    loadAnnouncements();
+
                     unlockInterface(data.name);
                 } else {
                     throw new Error('Credenciales');
                 }
             } catch (error) {
-                loginError.classList.remove('hidden');
-                // Restaurar botón
+                // MOSTRAR ERROR sin salto
+                loginError.classList.remove('opacity-0');
+                loginError.classList.add('opacity-100');
+                
                 btnText.classList.remove('opacity-0');
                 btnLoader.classList.add('hidden');
                 btnLogin.classList.remove('cursor-not-allowed');
@@ -472,21 +532,69 @@
             }
         }
 
-        function unlockInterface(name) {
-            loginScreen.classList.add('fade-out');
-            setTimeout(() => {
-                loginScreen.classList.add('hidden');
-                appContent.classList.remove('hidden');
-                appContent.classList.add('flex', 'fade-in');
-                userNameDisplay.textContent = name || 'Administración';
-                renderGrades();
-                checkSystemStatus();
-                loadAnnouncements(); 
-                setTimeout(matchWidths, 100); 
-            }, 700); 
+        function prefetchGradesData() {
+            const allGrades = [...gradosPrimaria, ...gradosSecundaria];
+            allGrades.forEach(g => {
+                const key = `${g.nombre}-${g.nivel}`;
+                gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error(`Error precargando ${g.nombre}`, error);
+                        return []; 
+                    });
+            });
         }
 
-        // --- LÓGICA DE ANUNCIOS ---
+        function skipIntro(name) {
+            prefetchGradesData(); 
+            loginScreen.classList.add('hidden');
+            appContent.classList.remove('hidden');
+            appContent.classList.add('flex', 'fade-in');
+            initApp(name);
+        }
+
+        function unlockInterface(name) {
+            // 1. Fade out login rapido (500ms en CSS)
+            loginCard.classList.add('fade-out');
+
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteText.textContent = randomQuote;
+
+            // 2. Mostrar frase (rapido)
+            setTimeout(() => {
+                loginCard.classList.add('hidden'); 
+                quoteContainer.classList.remove('hidden');
+                quoteContainer.classList.add('fade-in');
+            }, 400); // Antes 500
+
+            // 3. Reducción drástica del tiempo de lectura (2s en total)
+            setTimeout(() => {
+                loginScreen.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    loginScreen.classList.add('hidden');
+                    quoteContainer.classList.add('hidden'); 
+                    
+                    appContent.classList.remove('hidden');
+                    appContent.classList.add('flex', 'fade-in');
+                    
+                    initApp(name);
+                }, 500); 
+                
+            }, 2000); // Antes 3500
+        }
+
+        function initApp(name) {
+            userNameDisplay.textContent = name || 'Administración';
+            renderGrades();
+            if (!document.getElementById('status-label').textContent.includes('Línea')) {
+                 checkSystemStatus();
+                 loadAnnouncements();
+            }
+            resetInactivityTimer(); 
+            setTimeout(matchWidths, 100); 
+        }
+
         async function loadAnnouncements() {
             const banner = document.getElementById('announcement-banner');
             const track1 = document.getElementById('marquee-track');
@@ -497,24 +605,14 @@
                 const announcements = await response.json();
                 
                 if (announcements && announcements.length > 0) {
-                    // Construir cadena con PIPE como separador
-                    const rawText = announcements.map(a => {
-                        return `<span>${a.mensaje}</span>`;
-                    }).join('<span class="mx-6 text-montessori-red/50 text-lg font-light">|</span>');
-                    
-                    // Si no hay texto real, no mostrar
-                    if(!rawText.trim()) {
-                         banner.classList.add('hidden');
-                         return;
-                    }
+                    const rawText = announcements.map(a => `<span>${a.mensaje}</span>`).join('<span class="mx-6 text-montessori-red/50 text-lg font-light">|</span>');
+                    if(!rawText.trim()) { banner.classList.add('hidden'); return; }
 
-                    // Añadimos el separador también al final
                     const separator = '<span class="mx-6 text-montessori-red/50 text-lg font-light">|</span>';
                     const repeatedBlock = `${rawText} ${separator} ${rawText} ${separator} ${rawText} ${separator}`;
 
                     track1.innerHTML = repeatedBlock;
                     track2.innerHTML = repeatedBlock; 
-                    
                     banner.classList.remove('hidden'); 
                 } else {
                     banner.classList.add('hidden'); 
@@ -550,9 +648,8 @@
             const sContainer = document.getElementById('grid-secundaria');
             if(!pContainer || !sContainer) return; 
 
-            // Se actualizó la sombra para usar los colores sólidos corporativos (montessori-red/blue) en lugar de los tonos neón (red-300)
             const createCard = (g, color) => `
-                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border border-gray-200 rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-montessori-red/40' : 'hover:shadow-montessori-blue/40'}">
+                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border-2 border-black rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-montessori-red/40' : 'hover:shadow-montessori-blue/40'}">
                      <div class="flex flex-col justify-between h-full relative z-10">
                         <div class="flex justify-between items-start">
                             <div>
@@ -570,7 +667,6 @@
                      </div>
                 </div>
             `;
-
             pContainer.innerHTML = gradosPrimaria.map(g => createCard(g, 'red')).join('');
             sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue')).join('');
         }
@@ -579,7 +675,6 @@
             const dot = document.getElementById('status-dot');
             const label = document.getElementById('status-label');
             const iconBg = document.getElementById('status-icon-bg');
-            
             try {
                 const response = await fetch(`${API_URL}?action=checkStatus&t=${new Date().getTime()}`);
                 if (response.ok) {
@@ -591,8 +686,7 @@
                     }
                 }
             } catch (error) { 
-                dot.classList.add('bg-red-500');
-                label.textContent = "Offline";
+                dot.classList.add('bg-red-500'); label.textContent = "Offline";
             } 
         }
 
@@ -609,13 +703,17 @@
             document.getElementById('current-grade-title').textContent = `${grade} - ${level}`;
             const listContainer = document.getElementById('students-list-container');
             const loader = document.getElementById('loading-indicator');
-            
             listContainer.innerHTML = '';
             loader.classList.remove('hidden');
-
+            const key = `${grade}-${level}`;
             try {
-                const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
-                const data = await response.json();
+                let data;
+                if (gradePromises[key]) {
+                    data = await gradePromises[key];
+                } else {
+                    const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
+                    data = await response.json();
+                }
                 loader.classList.add('hidden');
                 renderStudentList(data, listContainer);
             } catch (error) {
@@ -625,7 +723,7 @@
         }
 
         function renderStudentList(data, container) {
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 container.innerHTML = `<div class="text-center py-10 text-gray-400">Sin registros</div>`;
                 return;
             }
