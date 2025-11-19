@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Notas - Pinceladas Montessori</title>
+    
+    <!-- FAVICON (Opción 2: Panel Administrativo) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2240%22 width=%2220%22 height=%2250%22 rx=%224%22 fill=%22%231A2C59%22/><rect x=%2240%22 y=%2225%22 width=%2220%22 height=%2265%22 rx=%224%22 fill=%22%231A2C59%22/><rect x=%2270%22 y=%2210%22 width=%2220%22 height=%2280%22 rx=%224%22 fill=%22%23E02B20%22/></svg>">
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Chewy&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        chewy: ['Chewy', 'cursive']
+                    },
+                    colors: {
+                        montessori: {
+                            blue: '#002060',
+                            red: '#C00000',
+                            yellow: '#FFD966',
+                            gray: '#F3F4F6'
+                        },
+                        logo: {
+                            blue: '#1A2C59',
+                            red: '#E02B20'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 15s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '25%': { transform: 'translate(150px, -180px) scale(1.4) rotate(45deg)' },
+                            '50%': { transform: 'translate(-100px, 120px) scale(0.8) rotate(-30deg)' },
+                            '75%': { transform: 'translate(50px, -50px) scale(1.1) rotate(15deg)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* --- CORE LAYOUT --- */
+        body { 
+            background-color: #F8FAFC; 
+            height: 100vh; /* Altura fija de ventana */
+            overflow: hidden; /* Prevenir scroll en el body principal */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* El contenedor principal maneja su propio scroll si es necesario */
+        main {
+            flex: 1;
+            overflow-y: auto; /* Scroll interno solo si es necesario */
+            display: flex;
+            flex-direction: column;
+            /* Padding reducido para compacidad */
+            padding: 1rem; 
+        }
+
+        /* Utilidades Scroll Invisible (Aplicado a todo) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        *::-webkit-scrollbar {
+            display: none; /* Chrome/Safari/Opera */
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #C00000;
+            width: 24px; height: 24px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes colorPulse { 0% { color: #9CA3AF; } 25% { color: #C00000; } 50% { color: #9CA3AF; } 75% { color: #002060; } 100% { color: #9CA3AF; } }
+        .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
+        
+        /* Transiciones */
+        .fade-out { animation: fadeOut 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeOut { from { opacity: 1; filter: blur(0); } to { opacity: 0; filter: blur(2px); pointer-events: none; } }
+        @keyframes fadeIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: blur(0); } }
+
+        /* --- ESTILOS DEL LOGO --- */
+        :root { --logo-blue: #1A2C59; --logo-red: #E02B20; }
+        .text-colegio {
+            color: var(--logo-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: -0.1em;
+            line-height: 1;
+        }
+        .text-pinceladas {
+            font-family: 'Chewy', cursive;
+            color: var(--logo-red);
+            line-height: 1;
+        }
+        .text-montessori-sub {
+            background-color: var(--logo-blue);
+            color: #ffffff;
+            padding: 0.1em 0.3em;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: -0.1em;
+            letter-spacing: 0.1em;
+            text-align: center;
+            width: auto; 
+        }
+        
+        /* Escalas */
+        .logo-lg .text-colegio { font-size: clamp(1.2rem, 3vw, 1.5rem); }
+        .logo-lg .text-pinceladas { font-size: clamp(3rem, 8vw, 4rem); }
+        .logo-lg .text-montessori-sub { font-size: clamp(1.2rem, 3vw, 1.5rem); }
+
+        .logo-sm .text-colegio { font-size: 0.55rem; }
+        .logo-sm .text-pinceladas { font-size: 1.3rem; }
+        .logo-sm .text-montessori-sub { font-size: 0.55rem; padding: 1px 4px; }
+        
+        .group-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%; 
+            padding: 1rem; /* Padding compacto */
+        }
+    </style>
+</head>
+<body class="text-slate-800 font-sans">
+
+    <!-- ================================ -->
+    <!-- PANTALLA DE LOGIN -->
+    <!-- ================================ -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
+        
+        <!-- Fondo Animado -->
+        <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
+            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
+            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
+            <div class="absolute top-[50%] left-[-20%] w-[30rem] h-[30rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[9000ms]"></div>
+            <div class="absolute bottom-[5%] right-[50%] w-[25rem] h-[25rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[12000ms]"></div>
+        </div>
+
+        <!-- Tarjeta Glassmorphism -->
+        <div class="relative z-10 w-full max-w-md p-6 mx-4">
+            <div class="bg-white/80 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+                <div class="logo-container logo-lg cursor-default text-center mb-8">
+                    <div class="text-section flex flex-col items-center">
+                        <div class="text-colegio">COLEGIO</div>
+                        <div class="text-pinceladas">Pinceladas</div>
+                        <div class="text-montessori-sub">MONTESSORI</div>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5" autocomplete="off">
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                            <input type="password" id="username" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-300 font-medium text-sm placeholder-gray-400" placeholder="Usuario" autocomplete="new-password">
+                        </div>
+                        <div class="relative group">
+                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            </div>
+                            <input type="password" id="password" required class="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-300 font-medium text-sm placeholder-gray-400" placeholder="Contraseña" autocomplete="new-password">
+                        </div>
+                        <div id="login-error" class="hidden p-3 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center gap-2 animate-pulse">
+                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="text-xs text-red-600 font-bold">Credenciales incorrectas</span>
+                        </div>
+                        <button type="submit" id="btn-login" class="w-full bg-gradient-to-r from-montessori-blue to-blue-900 text-white font-bold text-base py-3.5 rounded-xl shadow-lg shadow-blue-900/30 hover:shadow-blue-900/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 flex justify-center items-center gap-3">
+                            <span>Acceder</span>
+                            <div id="login-loader" class="loader hidden" style="width: 18px; height: 18px; border-color: white; border-top-color: transparent; border-width: 2px;"></div>
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center border-t border-gray-100 pt-4">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gestion.educativa.pinceladas@gmail.com" target="_blank" class="text-xs text-gray-400 hover:text-montessori-blue transition-colors font-medium flex items-center justify-center gap-1">
+                            Soporte Técnico
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================ -->
+    <!-- APLICACIÓN PRINCIPAL (OCULTA) -->
+    <!-- ================================ -->
+    <div id="app-content" class="hidden flex-col h-full w-full bg-white opacity-0 transition-opacity duration-1000">
+        
+        <!-- HEADER COMPACTO -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm h-14 flex-shrink-0 w-full">
+            <div class="w-full px-4 h-full flex justify-between items-center">
+                <!-- LOGO -->
+                <div class="logo-container logo-sm cursor-pointer hover:opacity-90 transition-opacity" onclick="showHome()">
+                    <div class="text-section flex flex-col items-center">
+                        <div class="text-colegio">COLEGIO</div>
+                        <div class="text-pinceladas">Pinceladas</div>
+                        <div class="text-montessori-sub">MONTESSORI</div>
+                    </div>
+                </div>
+                <!-- ADMIN -->
+                <div class="flex items-center">
+                    <div class="text-right flex flex-col justify-center h-full"> 
+                        <p id="user-name-display" class="text-xs font-bold text-gray-700 leading-none mb-0.5">Administración</p>
+                        <button onclick="logout()" class="text-[10px] text-red-500 font-bold hover:bg-red-50 rounded transition-colors uppercase tracking-wide border border-transparent hover:border-red-100 leading-none">
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-4 no-scrollbar overflow-y-auto">
+            
+            <!-- DASHBOARD METRICS (Más Compacto) -->
+            <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 fade-in">
+                <!-- Periodo -->
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                    <div class="p-2 bg-blue-50 text-montessori-blue rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Periodo</p>
+                        <p class="text-sm font-bold text-gray-800">2025 - 2026</p>
+                    </div>
+                </div>
+                <!-- Estado -->
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 relative overflow-hidden hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                    <div id="status-icon-bg" class="p-2 bg-gray-100 text-gray-400 rounded-lg transition-colors duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Estado</p>
+                        <p id="status-text-container" class="text-sm font-bold text-gray-600 flex items-center gap-2 transition-colors duration-300">
+                            <span id="status-dot" class="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></span> 
+                            <span id="status-label">...</span>
+                        </p>
+                    </div>
+                    <div id="connection-loader" class="absolute bottom-0 left-0 w-full h-1 bg-gray-200">
+                        <div class="h-full bg-montessori-blue animate-pulse w-full origin-left"></div>
+                    </div>
+                </div>
+                <!-- Soporte -->
+                <div class="bg-white p-3 rounded-xl border-2 border-transparent shadow-sm flex items-center gap-3 hover:shadow-md hover:border-gray-100 transition-all duration-300">
+                    <div class="p-2 bg-red-50 text-montessori-red rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-5 4h4a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wide">Soporte Técnico</p>
+                        <p class="text-sm font-bold text-gray-800">Tío Christopher</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA HOME (Grados - Compacto) -->
+            <div id="view-home" class="fade-in h-full flex flex-col">
+                <!-- Primaria -->
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-1">
+                    <div class="h-5 w-1 bg-montessori-red rounded-full"></div>
+                    <h2 class="text-lg font-bold text-montessori-red">Nivel Primaria</h2>
+                </div>
+                <!-- Grid Compacto -->
+                <div id="grid-primaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6"></div>
+
+                <!-- Secundaria -->
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-100 pb-1">
+                    <div class="h-5 w-1 bg-montessori-blue rounded-full"></div>
+                    <h2 class="text-lg font-bold text-montessori-blue">Nivel Secundaria</h2>
+                </div>
+                <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- VISTA ESTUDIANTES -->
+            <div id="view-students" class="hidden fade-in w-full">
+                <div class="flex items-center gap-2 mb-4 text-sm text-gray-500">
+                    <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Volver a Grados
+                    </button>
+                    <span>/</span>
+                    <span id="current-grade-title" class="font-bold text-montessori-blue">...</span>
+                </div>
+                <div class="w-full max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-4 px-4">
+                        <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
+                        <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
+                             <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-top-color: #002060;"></div>
+                             <span class="text-xs font-medium">Actualizando...</span>
+                        </div>
+                    </div>
+                    <div id="students-list-container" class="space-y-2"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-gray-200 py-4 mt-auto flex-shrink-0 w-full z-10">
+            <div class="text-center text-[10px] sm:text-xs">
+                <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:underline" title="Visitar Portafolio">
+                    © 2025 Sistema de Calificaciones - Desarrollado por Didac-Click Group.
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwnNusWP5LlxipynwTszW7bz70GNZa4n3RfEm-8tsM7nFktVeNvXATqz8HddKY_2YK9/exec"; 
+        const SESSION_TIMEOUT_MS = 15 * 60 * 1000; 
+
+        const loginScreen = document.getElementById('login-screen');
+        const appContent = document.getElementById('app-content');
+        const userNameDisplay = document.getElementById('user-name-display');
+        const loginError = document.getElementById('login-error');
+        const loginLoader = document.getElementById('login-loader');
+        const btnLogin = document.getElementById('btn-login');
+
+        const matchWidths = () => {
+            try {
+                document.querySelectorAll('.logo-container').forEach(container => {
+                    const pinceladas = container.querySelector('.text-pinceladas');
+                    const montessori = container.querySelector('.text-montessori-sub');
+                    if (pinceladas && montessori) {
+                        montessori.style.width = `${pinceladas.offsetWidth}px`;
+                    }
+                });
+            } catch (error) { console.error(error); }
+        };
+        window.addEventListener('resize', matchWidths);
+
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            if (loginScreen.classList.contains('hidden')) { 
+                inactivityTimer = setTimeout(() => {
+                    console.log("Sesión expirada por inactividad.");
+                    logout();
+                }, SESSION_TIMEOUT_MS);
+            }
+        }
+
+        window.onload = () => {
+            document.body.onmousemove = resetInactivityTimer;
+            document.body.onkeydown = resetInactivityTimer;
+            document.body.onclick = resetInactivityTimer;
+            matchWidths();
+            checkSessionValidity();
+        };
+
+        function checkSessionValidity() {
+            const sessionData = sessionStorage.getItem('pinceladas_session');
+            if (sessionData) {
+                const session = JSON.parse(sessionData);
+                const now = new Date().getTime();
+                if (now - session.loginTime > SESSION_TIMEOUT_MS) {
+                    sessionStorage.removeItem('pinceladas_session');
+                } else {
+                    unlockInterface(session.name);
+                    resetInactivityTimer();
+                }
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+            loginError.classList.add('hidden');
+            loginLoader.classList.remove('hidden');
+            btnLogin.classList.add('opacity-75', 'cursor-not-allowed');
+            btnLogin.disabled = true;
+            try {
+                const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`);
+                const data = await response.json();
+                if (data.success) {
+                    sessionStorage.setItem('pinceladas_session', JSON.stringify({
+                        auth: true,
+                        name: data.name,
+                        loginTime: new Date().getTime()
+                    }));
+                    unlockInterface(data.name);
+                    resetInactivityTimer();
+                } else {
+                    throw new Error('Error de credenciales');
+                }
+            } catch (error) {
+                loginError.classList.remove('hidden');
+            } finally {
+                loginLoader.classList.add('hidden');
+                btnLogin.classList.remove('opacity-75', 'cursor-not-allowed');
+                btnLogin.disabled = false;
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function unlockInterface(name) {
+            loginScreen.classList.add('fade-out');
+            setTimeout(() => {
+                loginScreen.classList.add('hidden');
+                loginScreen.classList.remove('flex'); 
+                appContent.classList.remove('hidden', 'opacity-0');
+                appContent.classList.add('flex', 'fade-in');
+                userNameDisplay.textContent = name || 'Administración';
+                renderGrades();
+                checkSystemStatus(); 
+                setTimeout(matchWidths, 100); 
+            }, 700); 
+        }
+
+        function logout() {
+            sessionStorage.removeItem('pinceladas_session');
+            sessionStorage.clear(); 
+            location.reload();
+        }
+
+        const gradosPrimaria = [
+            { nombre: "1º Grado", nivel: "Primaria", icon: "1" },
+            { nombre: "2º Grado", nivel: "Primaria", icon: "2" },
+            { nombre: "3º Grado", nivel: "Primaria", icon: "3" },
+            { nombre: "4º Grado", nivel: "Primaria", icon: "4" },
+            { nombre: "5º Grado", nivel: "Primaria", icon: "5" },
+            { nombre: "6º Grado", nivel: "Primaria", icon: "6" }
+        ];
+
+        const gradosSecundaria = [
+            { nombre: "1º Grado", nivel: "Secundaria", icon: "I" },
+            { nombre: "2º Grado", nivel: "Secundaria", icon: "II" },
+            { nombre: "3º Grado", nivel: "Secundaria", icon: "III" }
+        ];
+
+        function renderGrades() {
+            const pContainer = document.getElementById('grid-primaria');
+            const sContainer = document.getElementById('grid-secundaria');
+            if(!pContainer || !sContainer) return; 
+
+            const createCard = (g, color) => `
+                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer group bg-white border border-gray-200 rounded-xl group-card relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${color === 'red' ? 'hover:shadow-red-300/50' : 'hover:shadow-blue-300/50'}">
+                     <div class="flex flex-col justify-between h-full relative z-10">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1">Grado</p>
+                                <h3 class="text-xl font-bold text-gray-800">${g.nombre}</h3>
+                            </div>
+                            <div class="h-9 w-9 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-base shadow-sm transition-colors ${color === 'red' ? 'group-hover:text-montessori-red group-hover:bg-red-50' : 'group-hover:text-montessori-blue group-hover:bg-blue-50'}">
+                                ${g.icon}
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100/50"></div>
+                     </div>
+                     <div class="absolute -bottom-6 -right-6 text-gray-50 opacity-0 group-hover:opacity-20 transform rotate-12 scale-150 pointer-events-none font-black text-6xl transition-opacity duration-300">
+                        ${g.icon}
+                     </div>
+                </div>
+            `;
+
+            pContainer.innerHTML = gradosPrimaria.map(g => createCard(g, 'red')).join('');
+            sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue')).join('');
+        }
+
+        async function checkSystemStatus() {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-label');
+            const iconBg = document.getElementById('status-icon-bg');
+            const loader = document.getElementById('connection-loader');
+            if(API_URL.includes("TU_URL")) { setOfflineStyle(); label.textContent = "Configurar URL"; return; }
+            try {
+                const response = await fetch(`${API_URL}?action=checkStatus&t=${new Date().getTime()}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if(data.status === 'online') {
+                        dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
+                        label.textContent = "En Línea"; label.classList.add('text-green-700');
+                        iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
+                    }
+                } else { throw new Error("API Error"); }
+            } catch (error) { setOfflineStyle(); } 
+            finally { loader.style.display = 'none'; }
+        }
+
+        function setOfflineStyle() {
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-label');
+            const iconBg = document.getElementById('status-icon-bg');
+            dot.classList.remove('bg-gray-400', 'bg-green-500'); dot.classList.add('bg-red-500');
+            label.textContent = "Desconectado"; label.classList.add('text-red-700');
+            iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-red-50', 'text-red-600');
+        }
+
+        function showHome() {
+            document.getElementById('view-home').classList.remove('hidden');
+            document.getElementById('dashboard-metrics').classList.remove('hidden');
+            document.getElementById('view-students').classList.add('hidden');
+        }
+
+        async function loadStudents(grade, level) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('dashboard-metrics').classList.add('hidden');
+            document.getElementById('view-students').classList.remove('hidden');
+            document.getElementById('current-grade-title').textContent = `${grade} - ${level}`;
+            const listContainer = document.getElementById('students-list-container');
+            const loader = document.getElementById('loading-indicator');
+            const cacheKey = `students_${grade}_${level}`;
+            const cachedData = sessionStorage.getItem(cacheKey);
+            if (cachedData) {
+                renderStudentList(JSON.parse(cachedData), listContainer, false);
+            } else {
+                 listContainer.innerHTML = '<div class="text-center py-10 text-gray-400">Consultando base de datos...</div>';
+                 loader.classList.remove('hidden');
+            }
+            if (!cachedData) {
+                try {
+                    const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
+                    const data = await response.json();
+                    sessionStorage.setItem(cacheKey, JSON.stringify(data));
+                    loader.classList.add('hidden');
+                    renderStudentList(data, listContainer, true);
+                } catch (error) {
+                    loader.classList.add('hidden');
+                    listContainer.innerHTML = `<div class="p-6 text-red-500 text-center font-medium bg-red-50 rounded-lg">Error de conexión.</div>`;
+                }
+            }
+        }
+
+        function renderStudentList(data, container, isFreshLoad) {
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="p-12 text-center text-gray-400 flex flex-col items-center bg-white rounded-xl border border-gray-100">
+                        <h4 class="text-lg font-medium text-gray-600">Sin registros</h4>
+                        <p class="text-sm">No hay estudiantes en este grado.</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = data.map((student, index) => `
+                <div class="group flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg hover:border-montessori-blue/30 hover:shadow-sm transition-all duration-200 ${isFreshLoad ? 'fade-in' : ''}" style="${isFreshLoad ? 'animation-delay:' + (index * 50) + 'ms' : ''}">
+                    <div class="flex items-center gap-4">
+                        <span class="font-bold text-gray-400 text-lg w-8 text-right group-hover:text-montessori-blue transition-colors">${index + 1}.</span>
+                        <span class="font-semibold text-gray-700 text-lg">${student.nombre}</span>
+                    </div>
+                    <a href="${student.link}" target="_blank" class="text-sm font-bold text-montessori-blue border border-montessori-blue px-4 py-2 rounded-lg hover:bg-montessori-blue hover:text-white transition-all flex items-center gap-2 shadow-md">
+                        <span>Boletín</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
