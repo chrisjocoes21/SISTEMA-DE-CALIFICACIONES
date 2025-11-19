@@ -317,16 +317,24 @@
                         <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
-                <!-- HEADER PERSONALIZADO ALINEADO -->
-                <div class="flex items-center">
-                    <div class="text-right flex flex-col justify-center h-full items-center"> 
-                        <!-- Alineación cambiada a items-center para centrar el rol con el botón -->
-                        <p id="user-name-display" class="text-sm font-black text-montessori-blue leading-none mb-1 tracking-wide uppercase">...</p>
-                        <button onclick="logout()" class="text-[10px] text-red-500 font-bold hover:bg-red-50 rounded px-2 py-0.5 transition-colors uppercase tracking-wide border border-transparent hover:border-red-100 leading-none flex items-center gap-1">
-                            <span>Cerrar Sesión</span>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        </button>
+                <!-- HEADER PERSONALIZADO ALINEADO ESTILO IMAGEN -->
+                <div class="flex items-center h-full">
+                    <!-- Info Usuario -->
+                    <div class="flex flex-col items-end mr-4">
+                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-tight">Conectado como</span>
+                        <span id="user-name-display" class="text-sm font-black text-montessori-blue leading-tight">...</span>
                     </div>
+
+                    <!-- Separador Vertical -->
+                    <div class="h-6 w-px bg-gray-200 mx-1"></div>
+
+                    <!-- Botón Salir (Estilo Rojizo) -->
+                    <button onclick="logout()" class="ml-4 bg-red-50 hover:bg-red-100 text-red-500 font-bold text-sm px-4 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-2 group border border-transparent hover:border-red-200">
+                        <span>Salir</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </header>
