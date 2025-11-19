@@ -222,7 +222,6 @@
                         </div>
                         
                         <!-- ÁREA DE MENSAJES DE ESTADO (FEEDBACK) -->
-                        <!-- Se mantiene la altura fija (h-12) para evitar saltos, pero el contenido es dinámico -->
                         <div id="login-status-container" class="h-12 transition-all duration-300 p-3 rounded-lg flex items-center justify-center gap-2 opacity-0 pointer-events-none">
                             <!-- Icono dinámico -->
                             <svg id="login-status-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -266,6 +265,30 @@
     </div>
 
     <!-- ================================ -->
+    <!-- MODAL ACCESO DENEGADO (POP-UP) -->
+    <!-- ================================ -->
+    <div id="access-denied-modal" class="hidden fixed inset-0 z-[210] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300 border border-gray-100">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4 animate-pulse">
+                    <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl leading-6 font-bold text-gray-900 mb-2" id="modal-title">Acceso Restringido</h3>
+                <div class="mt-2">
+                    <p class="text-sm text-gray-500 mb-6">No tienes permisos suficientes para ver el contenido de este grado.</p>
+                </div>
+                <div class="mt-2">
+                    <button type="button" onclick="closeAccessDenied()" class="w-full inline-flex justify-center items-center rounded-xl border border-transparent shadow-md px-4 py-3 bg-gray-800 text-base font-bold text-white hover:bg-gray-700 focus:outline-none transition-all transform hover:-translate-y-0.5">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================ -->
     <!-- APLICACIÓN PRINCIPAL -->
     <!-- ================================ -->
     <div id="app-content" class="hidden flex-col h-full w-full bg-white opacity-0 transition-opacity duration-1000">
@@ -293,9 +316,9 @@
 
         <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-4 no-scrollbar overflow-y-auto">
             
-            <!-- DASHBOARD METRICS (REDISEÑADO) -->
+            <!-- DASHBOARD METRICS -->
             <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 fade-in">
-                <!-- [METRICS CARDS IGUALES AL ANTERIOR] -->
+                <!-- [METRICS CARDS] -->
                 <div class="relative overflow-hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:shadow-montessori-blue/10 hover:border-blue-100 transition-all duration-300 group cursor-default">
                     <div class="absolute -top-6 -right-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 blur-2xl group-hover:bg-blue-100 transition-colors duration-500"></div>
                     <div class="relative flex items-center gap-4">
@@ -354,9 +377,7 @@
                 </div>
                 <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
 
-                <!-- ================================ -->
                 <!-- BANNER DE ANUNCIOS -->
-                <!-- ================================ -->
                 <div id="announcement-banner" class="hidden mt-6 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white max-w-full mx-auto">
                     <div class="flex items-center relative h-12">
                         <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
@@ -409,8 +430,8 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwnNusWP5LlxipynwTszW7bz70GNZa4n3RfEm-8tsM7nFktVeNvXATqz8HddKY_2YK9/exec"; 
-        const SESSION_TIMEOUT_MS = 1.5 * 60 * 1000; // 1.5 MINUTOS
-
+        
+        // Variables DOM
         const loginScreen = document.getElementById('login-screen');
         const loginCard = document.getElementById('login-card');
         const quoteContainer = document.getElementById('quote-container');
@@ -423,6 +444,7 @@
         const btnText = document.getElementById('btn-text');
         const btnLoader = document.getElementById('btn-loader');
         const timeoutScreen = document.getElementById('timeout-screen');
+        const accessDeniedModal = document.getElementById('access-denied-modal');
 
         const quotes = [
             "Lo más importante es que lo más importante sea lo más importante.",
@@ -435,6 +457,10 @@
         ];
 
         const gradePromises = {}; 
+        let inactivityTimer;
+        
+        // Variable global para guardar el timeout del usuario actual (en milisegundos)
+        let currentUserTimeoutMs = 1.5 * 60 * 1000; // Por defecto 1.5 mins
 
         const matchWidths = () => {
             try {
@@ -449,14 +475,15 @@
         };
         window.addEventListener('resize', matchWidths);
 
-        let inactivityTimer;
-        
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
-            if (loginScreen.classList.contains('hidden') && timeoutScreen.classList.contains('hidden')) { 
+            // Solo activa timer si la app está visible y no hay modales bloqueantes
+            if (loginScreen.classList.contains('hidden') && 
+                timeoutScreen.classList.contains('hidden')) { 
+                
                 inactivityTimer = setTimeout(() => {
                     handleSessionTimeout();
-                }, SESSION_TIMEOUT_MS);
+                }, currentUserTimeoutMs);
             }
         }
 
@@ -473,30 +500,30 @@
             document.body.onclick = resetInactivityTimer;
             matchWidths();
             checkSessionValidity();
-            // Lanzar checkStatus anticipado para "calentar" la conexión si es posible
-            checkSystemStatus();
+            checkSystemStatus(); // Calentar conexión
         };
 
         function checkSessionValidity() {
             const sessionData = sessionStorage.getItem('pinceladas_session');
             if (sessionData) {
                 const session = JSON.parse(sessionData);
-                if ((new Date().getTime() - session.loginTime) > SESSION_TIMEOUT_MS) {
+                // Verificar caducidad usando el timeout guardado en la sesión (si existe)
+                const sessionTimeout = session.timeout ? (session.timeout * 60 * 1000) : currentUserTimeoutMs;
+                
+                if ((new Date().getTime() - session.loginTime) > sessionTimeout) {
                     sessionStorage.removeItem('pinceladas_session');
                 } else {
+                    // Restaurar timeout del usuario
+                    currentUserTimeoutMs = sessionTimeout;
                     skipIntro(session.name);
                     resetInactivityTimer();
                 }
             }
         }
 
-        // FUNCIÓN AUXILIAR PARA MENSAJES DE ESTADO EN LOGIN
         function updateLoginStatus(status, message) {
             loginStatusContainer.classList.remove('opacity-0', 'opacity-100', 'bg-red-50', 'border-red-100', 'bg-green-50', 'border-green-100', 'bg-blue-50', 'border-blue-100', 'text-red-600', 'text-green-600', 'text-blue-600');
-            
             loginStatusText.textContent = message;
-            
-            // Reset base classes
             loginStatusContainer.classList.add('opacity-100', 'border');
             
             if (status === 'error') {
@@ -513,9 +540,7 @@
             const usernameInput = document.getElementById('username').value;
             const passwordInput = document.getElementById('password').value;
             
-            // MOSTRAR ESTADO CARGANDO
             updateLoginStatus('loading', 'Verificando credenciales...');
-            
             btnText.classList.add('opacity-0');
             btnLoader.classList.remove('hidden');
             btnLogin.classList.add('cursor-not-allowed');
@@ -524,21 +549,29 @@
             try {
                 const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`);
                 const data = await response.json();
+                
                 if (data.success) {
-                    // MOSTRAR ÉXITO
                     updateLoginStatus('success', '¡Acceso Autorizado!');
                     
+                    // Configurar Timeout personalizado (viene en minutos, convertir a ms)
+                    currentUserTimeoutMs = (data.timeout || 1.5) * 60 * 1000;
+
                     sessionStorage.setItem('pinceladas_session', JSON.stringify({
                         auth: true,
                         name: data.name,
+                        permissions: data.permissions, // Guardar permisos (String)
+                        timeout: data.timeout, // Guardar preferencia de tiempo
                         loginTime: new Date().getTime()
                     }));
                     
+                    // Precargar solo si tiene permiso global o es admin, 
+                    // si tiene permisos restringidos, la precarga podría fallar o ser inútil, 
+                    // pero dejaremos que `prefetch` intente (la API decidirá si devuelve datos vacíos o no, 
+                    // aunque la lógica de bloqueo está aquí en el frontend).
                     prefetchGradesData();
                     checkSystemStatus(); 
                     loadAnnouncements();
 
-                    // Pequeña pausa para que el usuario vea el mensaje de éxito
                     setTimeout(() => {
                         unlockInterface(data.name);
                     }, 800);
@@ -546,9 +579,7 @@
                     throw new Error('Credenciales');
                 }
             } catch (error) {
-                // MOSTRAR ERROR
                 updateLoginStatus('error', 'Credenciales incorrectas');
-                
                 btnText.classList.remove('opacity-0');
                 btnLoader.classList.add('hidden');
                 btnLogin.classList.remove('cursor-not-allowed');
@@ -558,16 +589,42 @@
             }
         }
 
+        // --- GESTIÓN DE PERMISOS ---
+        function checkPermissions(gradeName) {
+            const sessionData = sessionStorage.getItem('pinceladas_session');
+            if (!sessionData) return false;
+            
+            const session = JSON.parse(sessionData);
+            const userPerms = (session.permissions || "").toUpperCase().trim();
+
+            // 1. Acceso Total
+            if (userPerms === 'TODO' || userPerms === 'ADMIN') return true;
+            
+            // 2. Lista específica (ej: "1º Grado, 2º Grado")
+            // Verificamos si el nombre del grado está incluido en la cadena de permisos
+            if (userPerms.includes(gradeName.toUpperCase())) return true;
+
+            return false;
+        }
+
+        function closeAccessDenied() {
+            accessDeniedModal.classList.remove('opacity-100');
+            accessDeniedModal.classList.add('opacity-0');
+            setTimeout(() => {
+                accessDeniedModal.classList.add('hidden');
+            }, 300);
+        }
+
         function prefetchGradesData() {
             const allGrades = [...gradosPrimaria, ...gradosSecundaria];
             allGrades.forEach(g => {
-                const key = `${g.nombre}-${g.nivel}`;
-                gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
-                    .then(response => response.json())
-                    .catch(error => {
-                        console.error(`Error precargando ${g.nombre}`, error);
-                        return []; 
-                    });
+                // Solo precargar si tiene permiso para ese grado para ahorrar datos
+                if (checkPermissions(g.nombre)) {
+                    const key = `${g.nombre}-${g.nivel}`;
+                    gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
+                        .then(response => response.json())
+                        .catch(error => []);
+                }
             });
         }
 
@@ -580,34 +637,26 @@
         }
 
         function unlockInterface(name) {
-            // 1. Fade out login rapido (500ms en CSS)
             loginCard.classList.add('fade-out');
-
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             quoteText.textContent = randomQuote;
 
-            // 2. Mostrar frase (rapido)
             setTimeout(() => {
                 loginCard.classList.add('hidden'); 
                 quoteContainer.classList.remove('hidden');
                 quoteContainer.classList.add('fade-in');
-            }, 400); // Antes 500
+            }, 400);
 
-            // 3. Reducción drástica del tiempo de lectura (2s en total)
             setTimeout(() => {
                 loginScreen.classList.add('fade-out');
-                
                 setTimeout(() => {
                     loginScreen.classList.add('hidden');
                     quoteContainer.classList.add('hidden'); 
-                    
                     appContent.classList.remove('hidden');
                     appContent.classList.add('flex', 'fade-in');
-                    
                     initApp(name);
                 }, 500); 
-                
-            }, 2000); // Antes 3500
+            }, 2000);
         }
 
         function initApp(name) {
@@ -723,6 +772,19 @@
         }
 
         async function loadStudents(grade, level) {
+            // 1. VERIFICAR PERMISOS ANTES DE HACER NADA
+            if (!checkPermissions(grade)) {
+                // Mostrar Modal de Acceso Denegado
+                accessDeniedModal.classList.remove('hidden');
+                // Pequeño timeout para permitir la transición de opacidad
+                setTimeout(() => {
+                    accessDeniedModal.classList.remove('opacity-0');
+                    accessDeniedModal.classList.add('opacity-100');
+                }, 10);
+                return; // DETENER EJECUCIÓN
+            }
+
+            // Si tiene permisos, proceder normalmente
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('dashboard-metrics').classList.add('hidden');
             document.getElementById('view-students').classList.remove('hidden');
@@ -731,6 +793,7 @@
             const loader = document.getElementById('loading-indicator');
             listContainer.innerHTML = '';
             loader.classList.remove('hidden');
+            
             const key = `${grade}-${level}`;
             try {
                 let data;
