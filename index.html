@@ -37,6 +37,7 @@
                     },
                     boxShadow: {
                         'card-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.03)', 
                     },
                     animation: {
                         'blob': 'blob 15s infinite',
@@ -57,7 +58,7 @@
     <style>
         /* --- CORE LAYOUT --- */
         body { 
-            background-color: #ffffff; /* Fondo base blanco para limpieza */
+            background-color: #ffffff; 
             height: 100vh; 
             overflow: hidden; 
             display: flex;
@@ -69,7 +70,7 @@
             overflow-y: auto; 
             display: flex;
             flex-direction: column;
-            padding: 1.5rem; /* Un poco más de espacio */
+            padding: 1.5rem; 
             width: 100%;
         }
 
@@ -288,7 +289,8 @@
         <!-- HEADER -->
         <header class="bg-white border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
             <div class="w-full px-4 h-full flex justify-between items-center max-w-[1440px] mx-auto">
-                <div class="logo-container logo-sm cursor-pointer hover:opacity-90 transition-opacity" onclick="showHome()">
+                <!-- LOGO NO CLICKEABLE -->
+                <div class="logo-container logo-sm select-none">
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
                         <div class="text-pinceladas">Pinceladas</div>
@@ -321,44 +323,44 @@
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
             <div class="max-w-[1440px] mx-auto w-full">
-                <!-- DASHBOARD METRICS: DISEÑO CLEAN / FLAT (REFERENCIA IMAGEN) -->
+                <!-- DASHBOARD METRICS: DISEÑO CLEAN / FLAT (MEJORADO) -->
                 <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
                     
-                    <!-- CARD 1: Periodo (Estilo Azul Clean) -->
-                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
-                        <div class="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <!-- CARD 1: Periodo -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
+                        <div class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Periodo</p>
-                            <p class="text-xl font-bold text-gray-800 leading-tight">2025 - 2026</p>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Periodo</p>
+                            <p class="text-2xl font-bold text-slate-800 leading-none">2025 - 2026</p>
                         </div>
                     </div>
 
-                    <!-- CARD 2: Estado (Estilo Verde Clean) -->
-                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
-                        <div id="status-icon-bg" class="h-12 w-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center transition-colors">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <!-- CARD 2: Estado -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
+                        <div id="status-icon-bg" class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-green-50 text-green-600 flex items-center justify-center transition-colors">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estado</p>
-                            <div class="flex items-center gap-2">
-                                <span id="status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> 
-                                <span id="status-label" class="text-xl font-bold text-gray-800 leading-tight">...</span>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Estado</p>
+                            <div class="flex items-center gap-2.5">
+                                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span> 
+                                <span id="status-label" class="text-2xl font-bold text-slate-800 leading-none">...</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- CARD 3: Usuarios (Estilo Violeta Clean) -->
-                    <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex items-center gap-4 hover:shadow-card-hover transition-shadow duration-300">
-                        <div class="h-12 w-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- CARD 3: Usuarios -->
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
+                        <div class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-purple-50 text-purple-600 flex items-center justify-center">
+                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Usuarios Online</p>
-                            <div class="flex items-center gap-2">
-                                <span id="live-users-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                <p id="live-users-count" class="text-xl font-bold text-gray-800 leading-tight">1</p>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Usuarios Online</p>
+                            <div class="flex items-center gap-2.5">
+                                <span id="live-users-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                                <p id="live-users-count" class="text-2xl font-bold text-slate-800 leading-none">1</p>
                             </div>
                         </div>
                     </div>
