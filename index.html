@@ -11,7 +11,7 @@
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Chewy&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Chewy&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -25,8 +25,8 @@
                     },
                     colors: {
                         montessori: {
-                            blue: '#002060',  /* Azul Oficial Unificado */
-                            red: '#C00000',   /* Rojo Oficial Unificado */
+                            blue: '#002060',
+                            red: '#C00000',
                             yellow: '#FFD966',
                             gray: '#F3F4F6'
                         },
@@ -36,16 +36,16 @@
                         }
                     },
                     boxShadow: {
-                        'card-hover': '0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 10px 12px -6px rgba(0, 0, 0, 0.02)', /* Sombra más suave */
+                        'card-hover': '0 15px 30px -5px rgba(0, 0, 0, 0.08), 0 10px 12px -6px rgba(0, 0, 0, 0.02)',
                         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.03)', 
                     },
                     animation: {
-                        'blob': 'blob 20s infinite alternate', /* Más lento para mayor fluidez */
+                        'blob': 'blob 20s infinite alternate',
                     },
                     keyframes: {
                         blob: {
                             '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(80px, -100px) scale(1.2) rotate(20deg)' }, /* Movimientos reducidos para suavidad */
+                            '33%': { transform: 'translate(80px, -100px) scale(1.2) rotate(20deg)' },
                             '66%': { transform: 'translate(-60px, 60px) scale(0.9) rotate(-10deg)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         }
@@ -64,7 +64,6 @@
             flex-direction: column;
         }
 
-        /* Optimización de Renderizado (Hardware Acceleration) */
         .animate-blob, .transition-all, .transform, .marquee-content {
             will-change: transform, opacity;
             transform: translateZ(0);
@@ -89,7 +88,7 @@
             display: flex;
             overflow: hidden;
             user-select: none;
-            mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%); /* Suavizado en bordes */
+            mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
             align-items: center; 
         }
 
@@ -100,7 +99,7 @@
             justify-content: space-around;
             min-width: 100%;
             gap: 0; 
-            animation: scroll-seamless 50s linear infinite; /* Más lento para leer mejor */
+            animation: scroll-seamless 50s linear infinite;
             height: 100%; 
         }
 
@@ -119,12 +118,11 @@
         }
         .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
 
-        /* Animación Azul <-> Rojo (Optimizada) */
         @keyframes blueRedCycle {
             0%, 100% { color: #002060; } 
             50% { color: #C00000; }      
         }
-        .animate-blue-red { animation: blueRedCycle 3s infinite cubic-bezier(0.4, 0, 0.2, 1); } /* Bezier suave */
+        .animate-blue-red { animation: blueRedCycle 3s infinite cubic-bezier(0.4, 0, 0.2, 1); }
 
 
         /* Loader */
@@ -138,7 +136,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Transiciones de Entrada/Salida suavizadas */
+        /* Transiciones */
         .fade-out { animation: fadeOut 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         .fade-in { animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         
@@ -190,6 +188,57 @@
         .logo-sm .text-colegio { font-size: 0.55rem; }
         .logo-sm .text-pinceladas { font-size: 1.3rem; }
         .logo-sm .text-montessori-sub { font-size: 0.55rem; padding: 1px 4px; }
+
+        /* --- FONDO ACADÉMICO Y PARTÍCULAS --- */
+        
+        .particles-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .grade-particle {
+            position: absolute;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900; 
+            opacity: 0;
+            user-select: none;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.5); 
+        }
+
+        /* Colores definidos - Alta visibilidad */
+        .grade-particle.blue { color: rgba(0, 32, 96, 0.25); }
+        .grade-particle.red { color: rgba(192, 0, 0, 0.25); }
+
+        /* Animación Fondo */
+        .grade-particle.background {
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(110vh) scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-10vh) scale(1.1) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+
+        /* Patrón de cuadrícula sutil */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 32, 96, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 32, 96, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
     </style>
 </head>
 <body class="text-slate-800 font-sans antialiased">
@@ -197,17 +246,23 @@
     <!-- ================================ -->
     <!-- PANTALLA DE CARGA INICIAL (PRELOADER) -->
     <!-- ================================ -->
+    <!-- z-300 -->
     <div id="initial-loader" class="fixed inset-0 z-[300] flex items-center justify-center bg-white transition-all duration-700">
-        <!-- Fondo animado reutilizado -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden">
+        <!-- Blobs de Fondo (z-0 relativo a este padre) -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
         </div>
         
-        <!-- CONTENIDO DEL LOADER ACTUALIZADO -->
-        <div class="relative z-10 flex flex-col items-center justify-center">
-            <!-- Tipografía ajustada para ser idéntica a los 7 hábitos (Montserrat Bold) -->
+        <!-- PARTICULAS ACADÉMICAS (z-10: Encima de blobs, debajo del texto) -->
+        <div class="particles-container z-10">
+            <div class="grid-overlay"></div>
+            <!-- JS inyectará partículas aquí -->
+        </div>
+
+        <!-- CONTENIDO (z-20: Encima de todo) -->
+        <div class="relative z-20 flex flex-col items-center justify-center">
             <h1 class="text-5xl md:text-7xl font-bold font-montserrat animate-blue-red drop-shadow-sm text-center leading-tight">
                 Cargando...
             </h1>
@@ -217,19 +272,28 @@
     <!-- ================================ -->
     <!-- PANTALLA DE LOGIN -->
     <!-- ================================ -->
+    <!-- z-100 -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
-        <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
+        <!-- Blobs de Fondo (z-0) -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
         </div>
 
+        <!-- PARTICULAS ACADÉMICAS (z-10: Debajo de la tarjeta de login que es z-20) -->
+        <div class="particles-container z-10">
+            <div class="grid-overlay"></div>
+            <!-- JS inyectará partículas aquí -->
+        </div>
+
+        <!-- Tarjeta y contenido (z-20 y superior) -->
         <div id="quote-container" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
             <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montessori drop-shadow-sm mb-4"></h2>
             <div class="h-1 w-24 bg-montessori-red rounded-full mx-auto"></div>
         </div>
 
-        <div id="login-card" class="relative z-10 w-full max-w-3xl mx-4 transition-all duration-700">
+        <div id="login-card" class="relative z-20 w-full max-w-3xl mx-4 transition-all duration-700">
             <div class="bg-white/90 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[380px]">
                 <div class="w-full md:w-5/12 bg-gray-50/80 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-gray-100 gap-4">
                     <div class="logo-container logo-lg cursor-default text-center transform scale-90 md:scale-100">
@@ -285,14 +349,23 @@
     <!-- ================================ -->
     <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
     <!-- ================================ -->
+    <!-- z-200 -->
     <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-gray-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
-        <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
+        <!-- Blobs de Fondo (z-0) -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
             <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
             <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
         </div>
+
+        <!-- PARTICULAS ACADÉMICAS (z-10) -->
+        <div class="particles-container z-10">
+            <div class="grid-overlay"></div>
+            <!-- JS inyectará partículas aquí -->
+        </div>
         
-        <div class="relative z-10 bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/50 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
+        <!-- Contenido modal (z-20) -->
+        <div class="relative z-20 bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/50 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-red-50/50">
                 <svg class="w-10 h-10 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -333,10 +406,17 @@
     <!-- ================================ -->
     <!-- APLICACIÓN PRINCIPAL -->
     <!-- ================================ -->
-    <div id="app-content" class="hidden flex-col h-full w-full bg-white opacity-0 transition-opacity duration-1000">
+    <!-- z-0: Base del app -->
+    <div id="app-content" class="hidden flex-col h-full w-full relative z-0 opacity-0 transition-opacity duration-1000 overflow-hidden">
         
-        <!-- HEADER -->
-        <header class="bg-white border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
+        <!-- FONDO ACADÉMICO INYECTADO (z-0: Fondo base) -->
+        <div id="academic-background" class="particles-container z-0">
+            <div class="grid-overlay"></div>
+            <!-- JS inyectará partículas aquí -->
+        </div>
+
+        <!-- HEADER (z-50) -->
+        <header class="bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
             <div class="w-full px-6 h-full flex justify-between items-center">
                 <!-- LOGO NO CLICKEABLE -->
                 <div class="logo-container logo-sm select-none">
@@ -368,8 +448,8 @@
             </div>
         </header>
 
-        <!-- MAIN -->
-        <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
+        <!-- MAIN (z-10: Encima del fondo, pero debajo del header) -->
+        <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-transparent relative z-10">
             
             <div class="w-full">
                 
@@ -476,7 +556,7 @@
             </div>
         </main>
 
-        <footer class="bg-white border-t border-gray-200 py-6 mt-auto flex-shrink-0 w-full z-10">
+        <footer class="bg-white/90 backdrop-blur-sm border-t border-gray-200 py-6 mt-auto flex-shrink-0 w-full z-10">
             <div class="text-center text-[10px] sm:text-xs text-gray-400">
                 <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:text-montessori-blue hover:underline" title="Visitar Portafolio">
                     © 2025 Sistema de Calificaciones - Desarrollado por Didac-Click Group.
@@ -598,6 +678,7 @@
         }
 
         window.onload = () => {
+            // Se elimina la lógica de 'handleMouseMove' para optimizar rendimiento
             document.body.onmousemove = resetInactivityTimer;
             document.body.onkeydown = resetInactivityTimer;
             document.body.onclick = resetInactivityTimer;
@@ -608,6 +689,7 @@
             
             checkSystemStatus(); 
             initDynamicTexts();
+            initAllParticles(); // Inicializar fondos animados en todas las pantallas
         };
 
         function checkSessionValidity() {
@@ -662,7 +744,13 @@
             btnLogin.disabled = true;
 
             try {
-                const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`);
+                // Agregamos redirect: 'follow' para mayor robustez con GAS
+                const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`, {
+                    redirect: "follow"
+                });
+                
+                if (!response.ok) throw new Error("Network response was not ok");
+
                 const data = await response.json();
                 
                 if (data.success) {
@@ -677,17 +765,28 @@
                         timeout: data.timeout,
                         loginTime: new Date().getTime()
                     }));
-                    prefetchGradesData();
-                    checkSystemStatus(data.name); 
-                    loadAnnouncements();
+                    
+                    // ESCALONAR PETICIONES:
+                    // No llamar a todo al mismo tiempo para evitar errores de "Failed to fetch" (bloqueo temporal por muchas peticiones)
+                    setTimeout(() => checkSystemStatus(data.name), 100); 
+                    setTimeout(() => prefetchGradesData(), 300);
+                    setTimeout(() => loadAnnouncements(), 800); 
+
                     setTimeout(() => {
                         unlockInterface(data.name);
-                    }, 800);
+                    }, 1000);
                 } else {
-                    throw new Error('Credenciales');
+                    throw new Error('Credenciales'); // Error específico de lógica
                 }
             } catch (error) {
-                updateLoginStatus('error', 'Credenciales incorrectas');
+                // Distinguir entre error de red y credenciales
+                if (error.message === 'Credenciales') {
+                    updateLoginStatus('error', 'Credenciales incorrectas');
+                } else {
+                    console.warn("Login fetch error:", error);
+                    updateLoginStatus('error', 'Error de conexión. Intente de nuevo.');
+                }
+
                 btnText.classList.remove('opacity-0');
                 btnLoader.classList.add('hidden');
                 btnLogin.classList.remove('cursor-not-allowed');
@@ -733,7 +832,7 @@
             allGrades.forEach(g => {
                 if (checkPermissions(g.nombre, g.nivel)) {
                     const key = `${g.nombre}-${g.nivel}`;
-                    gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
+                    gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`, { redirect: 'follow' })
                         .then(response => response.json())
                         .catch(error => []);
                 }
@@ -805,7 +904,7 @@
             if (username) url += `&username=${encodeURIComponent(username)}`;
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(url, { redirect: 'follow' });
                 if (response.ok) {
                     const data = await response.json();
                     
@@ -829,7 +928,11 @@
             const track2 = document.getElementById('marquee-track-clone');
             
             try {
-                const response = await fetch(`${API_URL}?action=getAnnouncements`);
+                // Redirect follow es importante para GAS
+                const response = await fetch(`${API_URL}?action=getAnnouncements`, { redirect: "follow" });
+                
+                if (!response.ok) throw new Error('Error de red al cargar anuncios');
+
                 const announcements = await response.json();
                 
                 if (announcements && announcements.length > 0) {
@@ -846,7 +949,8 @@
                     banner.classList.add('hidden'); 
                 }
             } catch (e) {
-                console.error("Error anuncios", e);
+                // Usar warn en lugar de error para no alarmar en consola si falla la red
+                console.warn("No se pudieron cargar los anuncios (posible bloqueo de red):", e.message);
                 banner.classList.add('hidden');
             }
         }
@@ -945,7 +1049,7 @@
                 if (gradePromises[key]) {
                     data = await gradePromises[key];
                 } else {
-                    const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`);
+                    const response = await fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(grade)}&level=${encodeURIComponent(level)}&t=${new Date().getTime()}`, { redirect: 'follow' });
                     data = await response.json();
                 }
                 loader.classList.add('hidden');
@@ -978,6 +1082,50 @@
                     </a>
                 </div>
             `).join('');
+        }
+
+        // --- LÓGICA DEL FONDO ACADÉMICO ---
+        // Se eliminó la lógica de generación de partículas por mouse
+        const symbols = ['100', 'A+', 'A', '10', '✓', '95', 'B+', '★', '90', 'A', '100'];
+
+        function initAllParticles() {
+            const containers = document.querySelectorAll('.particles-container');
+            containers.forEach(container => createParticlesForContainer(container));
+        }
+
+        function createParticlesForContainer(container) {
+            const particleCount = 18; // Densidad por pantalla
+            
+            for (let i = 0; i < particleCount; i++) {
+                spawnParticle(container);
+            }
+        }
+
+        function spawnParticle(container) {
+            const span = document.createElement('span');
+            span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            span.classList.add('grade-particle');
+            
+            // Color aleatorio (Azul o Rojo)
+            if (Math.random() > 0.5) span.classList.add('blue');
+            else span.classList.add('red');
+
+            const rotation = Math.floor(Math.random() * 40 - 20);
+            span.style.setProperty('--rotation', `${rotation}deg`);
+
+            // Partícula de fondo
+            span.classList.add('background');
+            const left = Math.random() * 100;
+            const duration = 15 + Math.random() * 20; 
+            const delay = Math.random() * -30; 
+            const size = 0.8 + Math.random() * 1.2; 
+
+            span.style.left = `${left}%`;
+            span.style.animationDuration = `${duration}s`;
+            span.style.animationDelay = `${delay}s`;
+            span.style.fontSize = `${size}rem`;
+
+            container.appendChild(span);
         }
     </script>
 </body>
