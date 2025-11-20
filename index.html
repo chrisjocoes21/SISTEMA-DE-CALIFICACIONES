@@ -242,9 +242,16 @@
     <!-- ================================ -->
     <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
     <!-- ================================ -->
-    <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-white/95 backdrop-blur-sm opacity-0 transition-opacity duration-500 ease-out">
-        <!-- MODIFICADO: Usamos max-w-lg para ancho uniforme -->
-        <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
+    <div id="timeout-screen" class="fixed inset-0 z-[200] flex items-center justify-center bg-gray-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
+        <!-- AÑADIMOS EL FONDO ANIMADO Y CAMBIAMOS EL FONDO PRINCIPAL DEL CONTENEDOR -->
+        <div class="absolute inset-0 w-full h-full bg-white overflow-hidden">
+            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
+            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
+        </div>
+        
+        <!-- MODIFICADO: Usamos max-w-lg para ancho uniforme, y z-10 para estar sobre el fondo -->
+        <div class="relative z-10 bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/50 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-red-50/50">
                 <svg class="w-10 h-10 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -292,8 +299,7 @@
         
         <!-- HEADER -->
         <header class="bg-white border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
-            <!-- SE ELIMINÓ: max-w-[1440px] y mx-auto para que el contenido ocupe todo el ancho -->
-            <!-- SE AJUSTÓ: px-4 a px-6 para que coincida con el padding del main -->
+            <!-- Contenedor del header usa px-6 -->
             <div class="w-full px-6 h-full flex justify-between items-center">
                 <!-- LOGO NO CLICKEABLE -->
                 <div class="logo-container logo-sm select-none">
@@ -326,6 +332,7 @@
         </header>
 
         <!-- MAIN -->
+        <!-- Main tiene px-6, lo respetamos -->
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
             <div class="max-w-[1440px] mx-auto w-full">
@@ -412,8 +419,8 @@
 
                 <!-- VISTA ESTUDIANTES -->
                 <div id="view-students" class="hidden fade-in w-full">
-                    <!-- CONTENEDOR AJUSTADO PARA ALINEACIÓN -->
-                    <div class="max-w-[1440px] mx-auto w-full">
+                    <!-- CONTENEDOR ANCHO: ELIMINAMOS max-w-[1440px] mx-auto, el padding ya lo da el main -->
+                    <div class="w-full"> 
                         <div class="flex items-center gap-2 mb-6 text-sm text-gray-500">
                             <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
