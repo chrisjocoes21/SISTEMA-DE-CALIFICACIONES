@@ -482,7 +482,11 @@
 
         // Función de personalización simplificada para solo manejar el login/logout
         function initDynamicTexts(name) {
-            userNameDisplay.textContent = name || 'Usuario';
+            // CORRECCIÓN PRINCIPAL: Solo actualizar el nombre si se provee uno explícitamente.
+            // Si no hay 'name' (ej. recarga de página), mantenemos el que ya puso checkSessionValidity()
+            if (name) {
+                userNameDisplay.textContent = name;
+            }
 
             // Configuración del modal de Acceso Denegado (Texto actualizado)
             accessDeniedTitle.textContent = 'Acceso Restringido por Permisos';
