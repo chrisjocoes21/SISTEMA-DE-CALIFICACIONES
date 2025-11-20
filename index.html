@@ -41,6 +41,9 @@
                     },
                     animation: {
                         'blob': 'blob 20s infinite alternate',
+                        // AJUSTE: Movimiento diagonal simple (diagonalShift) a 3s, suave y alterna.
+                        'diagonal-shift': 'diagonalShift 3s ease-in-out infinite alternate',
+                        'random-shift': 'randomShift 3s ease-in-out infinite alternate', 
                     },
                     keyframes: {
                         blob: {
@@ -48,6 +51,19 @@
                             '33%': { transform: 'translate(80px, -100px) scale(1.2) rotate(20deg)' },
                             '66%': { transform: 'translate(-60px, 60px) scale(0.9) rotate(-10deg)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        // Se mantiene randomShift pero se usará el diagonalShift
+                        randomShift: {
+                            '0%': { 'background-position': '0% 0%', 'transform': 'rotate(0deg) scale(1)' },
+                            '25%': { 'background-position': '25% 75%', 'transform': 'rotate(5deg) scale(1.05)' },
+                            '50%': { 'background-position': '50% 50%', 'transform': 'rotate(-3deg) scale(0.95)' },
+                            '75%': { 'background-position': '75% 25%', 'transform': 'rotate(8deg) scale(1.1)' },
+                            '100%': { 'background-position': '100% 100%', 'transform': 'rotate(0deg) scale(1)' },
+                        },
+                        // Animación Diagonal Simple
+                        diagonalShift: {
+                            '0%': { 'background-position': '0% 0%' },
+                            '100%': { 'background-position': '100% 100%' },
                         }
                     }
                 }
@@ -65,7 +81,7 @@
         }
 
         /* Optimización de renderizado */
-        .animate-blob, .transition-all, .transform, .marquee-content, #app-content, #view-home, #view-students {
+        .animate-blob, .animate-random-shift, .animate-diagonal-shift, .transition-all, .transform, .marquee-content, #app-content, #view-home, #view-students {
             will-change: transform, opacity;
             transform: translateZ(0);
             backface-visibility: hidden;
@@ -243,6 +259,26 @@
             background-size: 40px 40px;
             z-index: 0;
         }
+
+        /* --- NUEVO FONDO ANIMADO DE FRANJAS --- */
+        .animated-diagonal-background {
+            /* Usamos colores muy claros (blue-100 y red-100) para un efecto suave */
+            background: repeating-linear-gradient(
+                45deg, 
+                #DBEAFE 0%,      /* blue-100 */
+                #DBEAFE 40%, 
+                #FEE2E2 60%,      /* red-100 */
+                #FEE2E2 100%
+            );
+            /* Tamaño de fondo grande para que las franjas sean amplias */
+            background-size: 200vw 200vh;
+            /* Aplicar la animación de movimiento con la nueva clase: ahora es diagonal-shift */
+            animation: diagonalShift 3s ease-in-out infinite alternate; 
+            position: absolute; /* Es importante para que cubra el inset */
+            inset: 0;
+            z-index: 0;
+            will-change: background-position, transform; /* Optimización de rendimiento */
+        }
     </style>
 </head>
 <body class="text-slate-800 font-sans antialiased">
@@ -251,15 +287,12 @@
     <!-- PANTALLA DE CARGA INICIAL (PRELOADER) -->
     <!-- ================================ -->
     <!-- z-300 -->
-    <div id="initial-loader" class="fixed inset-0 z-[300] flex items-center justify-center bg-white transition-all duration-700">
+    <div id="initial-loader" class="fixed inset-0 z-[300] flex items-center justify-center bg-blue-50 transition-all duration-700">
         <!-- Blobs de Fondo (z-0 relativo a este padre) -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
-            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
-        </div>
+        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
+        <div class="animated-diagonal-background animate-diagonal-shift"></div>
         
-        <!-- PARTICULAS ACADÉMICAS (z-10: Encima de blobs, debajo del texto) -->
+        <!-- PARTICULAS ACADÉMICAS (z-10: Encima del nuevo fondo) -->
         <div class="particles-container z-10">
             <div class="grid-overlay"></div>
             <!-- JS inyectará partículas aquí -->
@@ -277,13 +310,10 @@
     <!-- PANTALLA DE LOGIN -->
     <!-- ================================ -->
     <!-- z-100 -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 overflow-hidden transition-all duration-700">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-blue-50 overflow-hidden transition-all duration-700">
         <!-- Blobs de Fondo (z-0) -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
-            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
-        </div>
+        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
+        <div class="animated-diagonal-background animate-diagonal-shift"></div>
 
         <!-- PARTICULAS ACADÉMICAS (z-10: Debajo de la tarjeta de login que es z-20) -->
         <div class="particles-container z-10">
@@ -293,7 +323,7 @@
 
         <!-- Tarjeta y contenido (z-20 y superior) -->
         <div id="quote-container" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
-            <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montessori drop-shadow-sm mb-4"></h2>
+            <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montserrat drop-shadow-sm mb-4"></h2>
             <div class="h-1 w-24 bg-montessori-red rounded-full mx-auto"></div>
         </div>
 
@@ -307,31 +337,31 @@
                             <div class="text-montessori-sub">MONTESSORI</div>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-400 font-medium text-center hidden md:block mt-2">Sistema de Gestión Académica</p>
+                    <p class="text-xs text-gray-600 font-medium text-center hidden md:block mt-2">Sistema de Gestión Académica</p>
                 </div>
 
                 <div class="w-full md:w-7/12 p-6 md:p-8 flex flex-col justify-center">
                     <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Credenciales de Acceso</label>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">Credenciales de Acceso</label>
                             <div class="space-y-3">
                                 <div class="relative group z-20">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <svg class="w-4 h-4 text-gray-600 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                     </div>
-                                    <input type="text" id="username" required class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-500 text-sm placeholder-gray-400" placeholder="Usuario">
+                                    <input type="text" id="username" required class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-500 text-sm placeholder-gray-600" placeholder="Usuario">
                                 </div>
                                 <div class="relative group z-20">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-400 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        <svg class="w-4 h-4 text-gray-600 group-focus-within:text-montessori-blue transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                     </div>
-                                    <input type="password" id="password" required class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-500 text-sm placeholder-gray-400" placeholder="Contraseña">
+                                    <input type="password" id="password" required class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 text-gray-800 focus:bg-white focus:border-montessori-blue focus:ring-2 focus:ring-montessori-blue/20 outline-none transition-all duration-500 text-sm placeholder-gray-600" placeholder="Contraseña">
                                 </div>
                             </div>
                         </div>
                         
                         <div id="login-status-container" class="min-h-[40px] transition-all duration-300 rounded-lg flex items-center justify-center gap-2 border border-transparent text-center px-2 py-1 bg-gray-50">
-                             <span id="login-status-text" class="text-xs font-medium text-gray-400">Ingrese sus credenciales para continuar</span>
+                             <span id="login-status-text" class="text-xs font-medium text-gray-600">Ingrese sus credenciales para continuar</span>
                         </div>
                         
                         <button type="submit" id="btn-login" class="relative w-full bg-montessori-blue text-white font-bold text-sm py-3 rounded-lg shadow-lg shadow-montessori-blue/30 hover:bg-montessori-blue hover:shadow-montessori-blue/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex justify-center items-center">
@@ -340,7 +370,7 @@
                         </button>
                     </form>
                     <div class="mt-4 text-center">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gestion.educativa.pinceladas@gmail.com" target="_blank" class="text-[10px] text-gray-400 hover:text-montessori-blue transition-colors font-medium inline-flex items-center gap-1">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gestion.educativa.pinceladas@gmail.com" target="_blank" class="text-[10px] text-gray-600 hover:text-montessori-blue transition-colors font-medium inline-flex items-center gap-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             Soporte Técnico
                         </a>
@@ -354,13 +384,10 @@
     <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
     <!-- ================================ -->
     <!-- z-200 -->
-    <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-gray-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
+    <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-blue-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
         <!-- Blobs de Fondo (z-0) -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
-            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
-        </div>
+        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
+        <div class="animated-diagonal-background animate-diagonal-shift"></div>
 
         <!-- PARTICULAS ACADÉMICAS (z-10) -->
         <div class="particles-container z-10">
@@ -376,7 +403,7 @@
                 </svg>
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-2" id="timeout-title">Sesión Finalizada por Seguridad</h3>
-            <p class="text-gray-500 text-sm mb-8 leading-relaxed" id="timeout-message">Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.</p>
+            <p class="text-gray-600 text-sm mb-8 leading-relaxed" id="timeout-message">Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.</p>
             <button onclick="location.reload()" class="w-full bg-montessori-blue text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-800 hover:shadow-montessori-blue/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0">
                 Restablecer Sesión
             </button>
@@ -396,7 +423,7 @@
                 </div>
                 <h3 class="text-xl leading-6 font-bold text-gray-900 mb-2" id="modal-title">Acceso Restringido por Permisos</h3>
                 <div class="mt-2">
-                    <p class="text-sm text-gray-500 mb-6" id="access-denied-message">El acceso a este **curso** ha sido denegado. El perfil de usuario actual no tiene asignados los permisos necesarios para visualizar la información de este grado. Para asistencia o revisión de permisos, contacte al **Tío Christopher**.</p>
+                    <p class="text-sm text-gray-600 mb-6" id="access-denied-message">El acceso a este **curso** ha sido denegado. El perfil de usuario actual no tiene asignados los permisos necesarios para visualizar la información de este grado. Para asistencia o revisión de permisos, contacte al **Tío Christopher**.</p>
                 </div>
                 <div class="mt-2">
                     <button type="button" onclick="closeAccessDenied()" class="w-full inline-flex justify-center items-center rounded-xl border border-transparent shadow-md px-4 py-3 bg-gray-800 text-base font-bold text-white hover:bg-gray-700 focus:outline-none transition-all transform hover:-translate-y-0.5">
@@ -434,7 +461,7 @@
                 <div class="flex items-center h-full">
                     <!-- Info Usuario -->
                     <div class="flex flex-col items-end mr-4">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-tight">Conectado como</span>
+                        <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest leading-tight">Conectado como</span>
                         <span id="user-name-display" class="text-sm font-black text-montessori-blue leading-tight">...</span>
                     </div>
 
@@ -466,7 +493,7 @@
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Límite Calificaciones</p>
+                            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Límite Calificaciones</p>
                             <p class="text-xl font-bold text-slate-800 leading-none">15 de Diciembre de 2025</p>
                         </div>
                     </div>
@@ -477,7 +504,7 @@
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Entrega de Boletines</p>
+                            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Entrega de Boletines</p>
                             <p class="text-xl font-bold text-slate-800 leading-none">06 de Febrero de 2026</p>
                         </div>
                     </div>
@@ -488,7 +515,7 @@
                              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Base de Datos</p>
+                            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-0.5">Base de Datos</p>
                             <div class="flex items-center gap-2.5">
                                 <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
                                 <span id="status-label" class="text-2xl font-bold text-slate-800 leading-none">...</span>
@@ -536,7 +563,7 @@
                 <!-- VISTA ESTUDIANTES -->
                 <div id="view-students" class="hidden fade-in w-full">
                     <div class="w-full"> 
-                        <div class="flex items-center gap-2 mb-6 text-sm text-gray-500">
+                        <div class="flex items-center gap-2 mb-6 text-sm text-gray-600">
                             <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                 Volver a Grados
@@ -561,7 +588,7 @@
         </main>
 
         <footer class="bg-white/90 backdrop-blur-sm border-t border-gray-200 py-6 mt-auto flex-shrink-0 w-full z-10">
-            <div class="text-center text-[10px] sm:text-xs text-gray-400">
+            <div class="text-center text-[10px] sm:text-xs text-gray-600">
                 <a href="https://chrisjocoes21.github.io/PORTAFOLIO/" target="_blank" class="animate-pulse-color font-medium transition-colors hover:text-montessori-blue hover:underline" title="Visitar Portafolio">
                     © 2025 Sistema de Calificaciones - Desarrollado por Didac-Click Group.
                 </a>
@@ -732,7 +759,7 @@
                 loginStatusText.classList.add('text-blue-600');
             } else {
                  loginStatusContainer.classList.add('bg-gray-50', 'border-transparent');
-                 loginStatusText.classList.add('text-gray-400', 'font-medium');
+                 loginStatusText.classList.add('text-gray-600', 'font-medium');
             }
         }
 
@@ -990,15 +1017,15 @@
                     }
                 } else {
                     finalClasses += ` border-gray-100 opacity-50 cursor-not-allowed hover:shadow-none`;
-                    gradeClasses += ` text-gray-400`;
-                    iconClasses += ' bg-gray-50 text-gray-400';
+                    gradeClasses += ` text-gray-600`;
+                    iconClasses += ' bg-gray-50 text-gray-600';
                     finalAction = `onclick="showAccessDeniedMessage()"`;
                 }
 
                 return `
                     <div ${finalAction} class="${finalClasses}">
                          <div>
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Grado</p>
+                            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-1">Grado</p>
                             <h3 class="${gradeClasses}">${g.nombre}</h3>
                          </div>
                          <div class="${iconClasses}">
@@ -1066,7 +1093,7 @@
 
         function renderStudentList(data, container, level) {
             if (!data || data.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-gray-400">Sin registros</div>`;
+                container.innerHTML = `<div class="text-center py-10 text-gray-600">Sin registros</div>`;
                 return;
             }
 
@@ -1079,7 +1106,7 @@
             container.innerHTML = data.map((student, index) => `
                 <div class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg ${hoverClass} hover:shadow-sm transition-colors">
                     <div class="flex items-center gap-4">
-                        <span class="font-bold text-gray-400 w-6 text-right">${index + 1}.</span>
+                        <span class="font-bold text-gray-600 w-6 text-right">${index + 1}.</span>
                         <span class="font-semibold text-gray-700">${student.nombre}</span>
                     </div>
                     <a href="${student.link}" target="_blank" class="text-sm font-bold ${btnClass} px-4 py-2 rounded-lg hover:text-white border transition-all">
