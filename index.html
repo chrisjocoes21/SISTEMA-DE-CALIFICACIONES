@@ -358,7 +358,7 @@
                     <!-- CARD 3: Estado (Conexión Base de Datos) - REEMPLAZA USUARIOS ONLINE -->
                     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
                         <!-- Usamos IDs para que el script checkSystemStatus actualice el estado -->
-                        <div id="status-icon-bg" class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-green-50 text-green-600 flex items-center justify-center transition-colors">
+                        <div id="status-icon-bg" class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-purple-50 text-purple-600 flex items-center justify-center transition-colors">
                              <!-- Icono de Base de Datos/Nube -->
                              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                         </div>
@@ -412,24 +412,27 @@
 
                 <!-- VISTA ESTUDIANTES -->
                 <div id="view-students" class="hidden fade-in w-full">
-                    <div class="flex items-center gap-2 mb-6 text-sm text-gray-500">
-                        <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                            Volver a Grados
-                        </button>
-                        <span>/</span>
-                        <span id="current-grade-title" class="font-bold text-montessori-blue">...</span>
-                    </div>
-                    
-                    <div class="w-full">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
-                            <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
-                                 <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
-                                 <span class="text-xs font-medium">Actualizando...</span>
-                            </div>
+                    <!-- CONTENEDOR AJUSTADO PARA ALINEACIÓN -->
+                    <div class="max-w-[1440px] mx-auto w-full">
+                        <div class="flex items-center gap-2 mb-6 text-sm text-gray-500">
+                            <button onclick="showHome()" class="hover:text-montessori-blue hover:underline flex items-center gap-1 font-medium transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                Volver a Grados
+                            </button>
+                            <span>/</span>
+                            <span id="current-grade-title" class="font-bold text-montessori-blue">...</span>
                         </div>
-                        <div id="students-list-container" class="space-y-2"></div>
+                        
+                        <div class="w-full">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
+                                <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
+                                     <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
+                                     <span class="text-xs font-medium">Actualizando...</span>
+                                </div>
+                            </div>
+                            <div id="students-list-container" class="space-y-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -778,7 +781,8 @@
                     if(data.status === 'online') {
                         dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
                         label.textContent = "En Línea"; label.classList.add('text-green-700');
-                        iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
+                        iconBg.classList.remove('bg-gray-100', 'text-gray-400', 'bg-purple-50', 'text-purple-600'); // Limpiamos colores de icono
+                        iconBg.classList.add('bg-green-50', 'text-green-600');
                     }
                     // La lógica de usuarios online se eliminó porque la tarjeta se reemplazó
                 }
@@ -786,6 +790,7 @@
                 // Manejo de errores simplificado
                 dot.classList.add('bg-red-500'); 
                 label.textContent = "Offline";
+                iconBg.classList.add('bg-red-50', 'text-red-600'); // Muestra error visualmente
             } 
         }
 
@@ -883,6 +888,12 @@
                 accessDeniedModal.classList.remove('opacity-0', 'scale-95');
                 accessDeniedModal.classList.add('opacity-100', 'scale-100');
             }, 10);
+        }
+
+        function showHome() {
+            document.getElementById('view-home').classList.remove('hidden');
+            document.getElementById('dashboard-metrics').classList.remove('hidden');
+            document.getElementById('view-students').classList.add('hidden');
         }
 
         async function loadStudents(grade, level) {
