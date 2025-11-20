@@ -250,7 +250,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
             </div>
-            <!-- TEXTOS ACTUALIZADOS: PUNTUALES Y GENÉRICOS -->
+            <!-- TEXTOS: PUNTUALES Y GENÉRICOS -->
             <h3 class="text-2xl font-bold text-gray-800 mb-2" id="timeout-title">Sesión Finalizada por Seguridad</h3>
             <p class="text-gray-500 text-sm mb-8 leading-relaxed" id="timeout-message">Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.</p>
             <button onclick="location.reload()" class="w-full bg-montessori-blue text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-800 hover:shadow-montessori-blue/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0">
@@ -329,44 +329,44 @@
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
             <div class="max-w-[1440px] mx-auto w-full">
-                <!-- DASHBOARD METRICS: Mantenemos las 3 tarjetas originales -->
+                <!-- DASHBOARD METRICS: Nuevas Métricas Clave -->
                 <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
                     
-                    <!-- CARD 1: Periodo -->
+                    <!-- CARD 1: Fecha Límite de Colocación -->
                     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
                         <div class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-blue-50 text-blue-600 flex items-center justify-center">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Periodo</p>
-                            <p class="text-2xl font-bold text-slate-800 leading-none">2025 - 2026</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Límite Calificaciones</p>
+                            <p class="text-xl font-bold text-slate-800 leading-none">15 de Diciembre de 2025</p>
                         </div>
                     </div>
 
-                    <!-- CARD 2: Estado -->
+                    <!-- CARD 2: Fecha de Entrega de Boletines -->
                     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
-                        <div id="status-icon-bg" class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-green-50 text-green-600 flex items-center justify-center transition-colors">
+                         <div class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-montessori-red/10 text-montessori-red flex items-center justify-center">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Estado</p>
-                            <div class="flex items-center gap-2.5">
-                                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span> 
-                                <span id="status-label" class="text-2xl font-bold text-slate-800 leading-none">...</span>
-                            </div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Entrega de Boletines</p>
+                            <!-- Fecha actualizada con 06 para simetría -->
+                            <p class="text-xl font-bold text-slate-800 leading-none">06 de Febrero de 2026</p>
                         </div>
                     </div>
 
-                    <!-- CARD 3: Usuarios -->
+                    <!-- CARD 3: Estado (Conexión Base de Datos) - REEMPLAZA USUARIOS ONLINE -->
                     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
-                        <div class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-purple-50 text-purple-600 flex items-center justify-center">
-                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <!-- Usamos IDs para que el script checkSystemStatus actualice el estado -->
+                        <div id="status-icon-bg" class="h-14 w-14 flex-shrink-0 rounded-[1.2rem] bg-green-50 text-green-600 flex items-center justify-center transition-colors">
+                             <!-- Icono de Base de Datos/Nube -->
+                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
                         </div>
                         <div class="flex flex-col justify-center">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Usuarios Online</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Base de Datos</p>
                             <div class="flex items-center gap-2.5">
-                                <span id="live-users-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                                <p id="live-users-count" class="text-2xl font-bold text-slate-800 leading-none">1</p>
+                                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                                <span id="status-label" class="text-2xl font-bold text-slate-800 leading-none">...</span>
                             </div>
                         </div>
                     </div>
@@ -493,6 +493,22 @@
             "Sinergiza: El todo es más grande que la suma de sus partes.",
             "Sé proactivo: Tú eres el arquitecto de tu destino.",
             "Afila la sierra: Nunca dejes de aprender y crecer."
+        ];
+
+        // Variables globales para los grados (Evitamos redeclaración)
+        const gradosPrimaria = [
+            { nombre: "1º Grado", nivel: "Primaria", icon: "1" },
+            { nombre: "2º Grado", nivel: "Primaria", icon: "2" },
+            { nombre: "3º Grado", nivel: "Primaria", icon: "3" },
+            { nombre: "4º Grado", nivel: "Primaria", icon: "4" },
+            { nombre: "5º Grado", nivel: "Primaria", icon: "5" },
+            { nombre: "6º Grado", nivel: "Primaria", icon: "6" }
+        ];
+
+        const gradosSecundaria = [
+            { nombre: "1º Grado", nivel: "Secundaria", icon: "I" },
+            { nombre: "2º Grado", nivel: "Secundaria", icon: "II" },
+            { nombre: "3º Grado", nivel: "Secundaria", icon: "III" }
         ];
 
         const gradePromises = {}; 
@@ -737,6 +753,42 @@
             }, 60000); 
         }
 
+        // FUNCIÓN CORREGIDA
+        async function checkSystemStatus(username = null) {
+            // Se obtienen las referencias al inicio de la función
+            const dot = document.getElementById('status-dot');
+            const label = document.getElementById('status-label');
+            const iconBg = document.getElementById('status-icon-bg');
+            // Se eliminaron las referencias a live-users porque ya no existen en el HTML
+            
+            // VERIFICACIÓN DE NULIDAD: Si alguno no existe, salimos (soluciona el error de "Cannot read properties of null")
+            if (!dot || !label || !iconBg) {
+                console.error("Dashboard elements not fully loaded. Skipping status check.");
+                return; 
+            }
+            
+            let url = `${API_URL}?action=checkStatus&t=${new Date().getTime()}`;
+            if (username) url += `&username=${encodeURIComponent(username)}`;
+
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if(data.status === 'online') {
+                        dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
+                        label.textContent = "En Línea"; label.classList.add('text-green-700');
+                        iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
+                    }
+                    // La lógica de usuarios online se eliminó porque la tarjeta se reemplazó
+                }
+            } catch (error) { 
+                // Manejo de errores simplificado
+                dot.classList.add('bg-red-500'); 
+                label.textContent = "Offline";
+            } 
+        }
+
         async function loadAnnouncements() {
             const banner = document.getElementById('announcement-banner');
             const track1 = document.getElementById('marquee-track');
@@ -769,21 +821,6 @@
             sessionStorage.removeItem('pinceladas_session');
             location.reload();
         }
-
-        const gradosPrimaria = [
-            { nombre: "1º Grado", nivel: "Primaria", icon: "1" },
-            { nombre: "2º Grado", nivel: "Primaria", icon: "2" },
-            { nombre: "3º Grado", nivel: "Primaria", icon: "3" },
-            { nombre: "4º Grado", nivel: "Primaria", icon: "4" },
-            { nombre: "5º Grado", nivel: "Primaria", icon: "5" },
-            { nombre: "6º Grado", nivel: "Primaria", icon: "6" }
-        ];
-
-        const gradosSecundaria = [
-            { nombre: "1º Grado", nivel: "Secundaria", icon: "I" },
-            { nombre: "2º Grado", nivel: "Secundaria", icon: "II" },
-            { nombre: "3º Grado", nivel: "Secundaria", icon: "III" }
-        ];
 
         function renderGrades() {
             const pContainer = document.getElementById('grid-primaria');
@@ -846,50 +883,6 @@
                 accessDeniedModal.classList.remove('opacity-0', 'scale-95');
                 accessDeniedModal.classList.add('opacity-100', 'scale-100');
             }, 10);
-        }
-
-        async function checkSystemStatus(username = null) {
-            const dot = document.getElementById('status-dot');
-            const label = document.getElementById('status-label');
-            const iconBg = document.getElementById('status-icon-bg');
-            const liveCount = document.getElementById('live-users-count');
-            const liveDot = document.getElementById('live-users-dot');
-            
-            let url = `${API_URL}?action=checkStatus&t=${new Date().getTime()}`;
-            if (username) url += `&username=${encodeURIComponent(username)}`;
-
-            try {
-                const response = await fetch(url);
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if(data.status === 'online') {
-                        dot.classList.remove('bg-gray-400', 'bg-red-500'); dot.classList.add('bg-green-500');
-                        label.textContent = "En Línea"; label.classList.add('text-green-700');
-                        iconBg.classList.remove('bg-gray-100', 'text-gray-400'); iconBg.classList.add('bg-green-50', 'text-green-600');
-                    }
-                    
-                    if (data.activeUsers !== undefined) {
-                        liveCount.textContent = data.activeUsers;
-                        liveDot.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500');
-                        if (data.activeUsers < 5) {
-                            liveDot.classList.add('bg-green-500');
-                        } else if (data.activeUsers < 15) {
-                            liveDot.classList.add('bg-yellow-500');
-                        } else {
-                            liveDot.classList.add('bg-red-500');
-                        }
-                    }
-                }
-            } catch (error) { 
-                dot.classList.add('bg-red-500'); label.textContent = "Offline";
-            } 
-        }
-
-        function showHome() {
-            document.getElementById('view-home').classList.remove('hidden');
-            document.getElementById('dashboard-metrics').classList.remove('hidden');
-            document.getElementById('view-students').classList.add('hidden');
         }
 
         async function loadStudents(grade, level) {
