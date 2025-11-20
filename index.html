@@ -112,6 +112,14 @@
         }
         .animate-pulse-color { animation: colorPulse 8s ease-in-out infinite; }
 
+        /* Nueva animación específica Azul <-> Rojo */
+        @keyframes blueRedCycle {
+            0%, 100% { color: #002060; } /* Azul Montessori */
+            50% { color: #C00000; }      /* Rojo Montessori */
+        }
+        .animate-blue-red { animation: blueRedCycle 2s infinite ease-in-out; }
+
+
         /* Loader */
         .loader {
             border: 3px solid rgba(255,255,255,0.3); 
@@ -170,6 +178,25 @@
     </style>
 </head>
 <body class="text-slate-800 font-sans">
+
+    <!-- ================================ -->
+    <!-- PANTALLA DE CARGA INICIAL (PRELOADER) -->
+    <!-- ================================ -->
+    <div id="initial-loader" class="fixed inset-0 z-[300] flex items-center justify-center bg-white transition-all duration-700">
+        <!-- Fondo animado reutilizado del login -->
+        <div class="absolute inset-0 w-full h-full overflow-hidden">
+            <div class="absolute top-[-10%] left-[-10%] w-[45rem] h-[45rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[0ms]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[38rem] h-[38rem] bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[3000ms]"></div>
+            <div class="absolute top-[30%] left-[30%] w-[32rem] h-[32rem] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-[6000ms]"></div>
+        </div>
+        
+        <!-- CONTENIDO DEL LOADER SIMPLIFICADO -->
+        <div class="relative z-10 flex flex-col items-center justify-center">
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter font-montserrat animate-blue-red drop-shadow-sm">
+                Cargando...
+            </h1>
+        </div>
+    </div>
 
     <!-- ================================ -->
     <!-- PANTALLA DE LOGIN -->
@@ -336,9 +363,12 @@
         <!-- Main tiene px-6, lo respetamos -->
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
-            <div class="max-w-[1440px] mx-auto w-full">
-                <!-- DASHBOARD METRICS: Nuevas Métricas Clave -->
-                <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
+            <!-- CONTENEDOR ANCHO DINÁMICO -->
+            <!-- Antes tenía max-w-[1440px] aquí. Ahora lo quitamos para que 'view-students' use todo el ancho. -->
+            <div class="w-full">
+                
+                <!-- DASHBOARD METRICS: Limitado a 1440px para diseño limpio -->
+                <div id="dashboard-metrics" class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
                     
                     <!-- CARD 1: Fecha Límite de Colocación -->
                     <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-soft flex items-center gap-5 hover:shadow-md transition-all duration-300">
@@ -380,8 +410,8 @@
                     </div>
                 </div>
 
-                <!-- VISTA HOME: LISTADO GRADOS -->
-                <div id="view-home" class="fade-in h-full flex flex-col pb-8 w-full">
+                <!-- VISTA HOME: LISTADO GRADOS (Limitado a 1440px) -->
+                <div id="view-home" class="max-w-[1440px] mx-auto fade-in h-full flex flex-col pb-8 w-full">
                     
                     <!-- Primaria -->
                     <div class="flex items-center gap-3 mb-4 pb-1">
@@ -418,7 +448,7 @@
                     </div>
                 </div>
 
-                <!-- VISTA ESTUDIANTES -->
+                <!-- VISTA ESTUDIANTES: ANCHO COMPLETO (Sin max-w) -->
                 <div id="view-students" class="hidden fade-in w-full">
                     <!-- CONTENEDOR ANCHO: ELIMINAMOS max-w-[1440px] mx-auto, el padding ya lo da el main -->
                     <div class="w-full"> 
@@ -476,6 +506,7 @@
         const accessDeniedTitle = document.getElementById('modal-title'); // Usaremos este ID para el título
         const accessDeniedMessage = document.getElementById('access-denied-message'); 
         const accessDeniedButton = accessDeniedModal.querySelector('button'); // Referencia al botón
+        const initialLoader = document.getElementById('initial-loader'); // Referencia al nuevo loader
 
         // Variables globales de sesión simplificadas
         let userPermissions = '';
@@ -568,13 +599,26 @@
             });
             appContent.classList.add('blur-sm');
         }
+        
+        // NUEVO: Función para quitar el cargador inicial suavemente
+        function removeInitialLoader() {
+            if(!initialLoader) return;
+            initialLoader.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                initialLoader.classList.add('hidden');
+            }, 700);
+        }
 
         window.onload = () => {
             document.body.onmousemove = resetInactivityTimer;
             document.body.onkeydown = resetInactivityTimer;
             document.body.onclick = resetInactivityTimer;
             matchWidths();
-            checkSessionValidity();
+            // Añadimos un pequeño delay artificial para que se vea el loader si carga muy rápido
+            setTimeout(() => {
+                 checkSessionValidity();
+            }, 800);
+            
             checkSystemStatus(); 
             // Inicializar textos genéricos y dashboard
             initDynamicTexts();
@@ -588,12 +632,15 @@
                 
                 if ((new Date().getTime() - session.loginTime) > sessionTimeout) {
                     sessionStorage.removeItem('pinceladas_session');
+                    removeInitialLoader(); // Mostrar login
                 } else {
                     currentUserTimeoutMs = sessionTimeout;
                     userPermissions = session.permissions || ''; 
                     skipIntro(session.name);
                     resetInactivityTimer();
                 }
+            } else {
+                removeInitialLoader(); // No hay sesión, mostrar login
             }
         }
 
@@ -723,6 +770,7 @@
             appContent.classList.remove('hidden');
             appContent.classList.add('flex', 'fade-in');
             initApp(name);
+            removeInitialLoader(); // IMPORTANTE: Quitar loader si saltamos intro
         }
 
         function unlockInterface(name) {
