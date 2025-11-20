@@ -599,13 +599,35 @@
             }
         }
 
-        function checkPermissions(gradeName) {
+        function checkPermissions(gradeName, level) {
             const sessionData = sessionStorage.getItem('pinceladas_session');
             if (!sessionData) return false;
+            
             const session = JSON.parse(sessionData);
             const userPerms = (session.permissions || "").toUpperCase().trim();
+            
+            // 1. Acceso Total
             if (userPerms === 'TODO' || userPerms === 'ADMIN') return true;
-            if (userPerms.includes(gradeName.toUpperCase())) return true;
+
+            const g = gradeName.toUpperCase(); // Ej: "1º GRADO"
+            const l = (level || "").toUpperCase();     // Ej: "PRIMARIA"
+
+            // 2. Búsqueda Específica (NUEVO: Prioridad Alta)
+            // Permite: "1º SECUNDARIA", "1º GRADO SECUNDARIA", "1º PRIMARIA", etc.
+            
+            // Opción A: Nombre completo + Nivel (Ej: "1º GRADO SECUNDARIA")
+            if (userPerms.includes(`${g} ${l}`)) return true; 
+            
+            // Opción B: Nombre corto + Nivel (Ej: "1º SECUNDARIA")
+            // Quitamos la palabra " GRADO" para hacer la búsqueda más natural
+            const shortGrade = g.replace(' GRADO', ''); 
+            if (userPerms.includes(`${shortGrade} ${l}`)) return true;
+
+            // 3. Búsqueda Genérica (Retrocompatibilidad)
+            // Si el usuario solo puso "1º GRADO" en el Excel, sigue abriendo ambos niveles.
+            // Esto evita que se rompa la configuración actual de otros profesores.
+            if (userPerms.includes(g)) return true;
+
             return false;
         }
 
@@ -620,7 +642,7 @@
         function prefetchGradesData() {
             const allGrades = [...gradosPrimaria, ...gradosSecundaria];
             allGrades.forEach(g => {
-                if (checkPermissions(g.nombre)) {
+                if (checkPermissions(g.nombre, g.nivel)) {
                     const key = `${g.nombre}-${g.nivel}`;
                     gradePromises[key] = fetch(`${API_URL}?action=getStudents&grade=${encodeURIComponent(g.nombre)}&level=${encodeURIComponent(g.nivel)}&t=${new Date().getTime()}`)
                         .then(response => response.json())
@@ -732,22 +754,59 @@
             const sContainer = document.getElementById('grid-secundaria');
             if(!pContainer || !sContainer) return; 
 
-            const createCard = (g, colorClass, borderClass) => `
-                <div onclick="loadStudents('${g.nombre}', '${g.nivel}')" class="cursor-pointer bg-white border ${borderClass} rounded-xl p-6 flex justify-between items-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                     <div>
-                        <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">Grado</p>
-                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-black transition-colors">${g.nombre}</h3>
-                     </div>
-                     <div class="h-10 w-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 font-bold text-lg group-hover:bg-${colorClass === 'red' ? 'red' : 'blue'}-50 group-hover:text-${colorClass === 'red' ? 'montessori-red' : 'montessori-blue'} transition-colors">
-                        ${g.icon}
-                     </div>
-                </div>
-            `;
+            const createCard = (g, colorClass, borderClass) => {
+                // Verificar si tiene permiso para este grado y nivel específicos
+                const hasPermission = checkPermissions(g.nombre, g.nivel);
+                
+                const baseClasses = "cursor-pointer bg-white border rounded-xl p-6 flex justify-between items-center transition-all duration-300 group";
+                let finalClasses = baseClasses;
+                let finalAction = `onclick="loadStudents('${g.nombre}', '${g.nivel}')"`;
+                
+                let iconClasses = `h-10 w-10 rounded-lg flex items-center justify-center font-bold text-lg transition-colors`;
+                let gradeClasses = `text-xl font-bold transition-colors`;
+                
+                if (hasPermission) {
+                    finalClasses += ` ${borderClass} hover:shadow-lg hover:-translate-y-1`;
+                    gradeClasses += ` text-gray-800 group-hover:text-black`;
+                    
+                    if (colorClass === 'red') {
+                        iconClasses += ' bg-red-50 text-montessori-red';
+                    } else {
+                        iconClasses += ' bg-blue-50 text-montessori-blue';
+                    }
+                } else {
+                    finalClasses += ` border-gray-100 opacity-50 cursor-not-allowed hover:shadow-none`;
+                    gradeClasses += ` text-gray-400`;
+                    iconClasses += ' bg-gray-50 text-gray-400';
+                    finalAction = `onclick="showAccessDeniedMessage()"`;
+                }
+
+                return `
+                    <div ${finalAction} class="${finalClasses}">
+                         <div>
+                            <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">Grado</p>
+                            <h3 class="${gradeClasses}">${g.nombre}</h3>
+                         </div>
+                         <div class="${iconClasses}">
+                            ${g.icon}
+                         </div>
+                    </div>
+                `;
+            };
             
             // Primaria: Borde Rojo
             pContainer.innerHTML = gradosPrimaria.map(g => createCard(g, 'red', 'border-montessori-red')).join('');
             // Secundaria: Borde Azul
             sContainer.innerHTML = gradosSecundaria.map(g => createCard(g, 'blue', 'border-montessori-blue')).join('');
+        }
+        
+        // Nueva función para mostrar el mensaje de acceso denegado
+        function showAccessDeniedMessage() {
+            accessDeniedModal.classList.remove('hidden');
+            setTimeout(() => {
+                accessDeniedModal.classList.remove('opacity-0', 'scale-95');
+                accessDeniedModal.classList.add('opacity-100', 'scale-100');
+            }, 10);
         }
 
         async function checkSystemStatus(username = null) {
@@ -795,12 +854,9 @@
         }
 
         async function loadStudents(grade, level) {
-            if (!checkPermissions(grade)) {
-                accessDeniedModal.classList.remove('hidden');
-                setTimeout(() => {
-                    accessDeniedModal.classList.remove('opacity-0');
-                    accessDeniedModal.classList.add('opacity-100');
-                }, 10);
+            // Se usa el nuevo checkPermissions con ambos parámetros
+            if (!checkPermissions(grade, level)) {
+                showAccessDeniedMessage();
                 return; 
             }
 
