@@ -243,16 +243,18 @@
     <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
     <!-- ================================ -->
     <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-white/95 backdrop-blur-sm opacity-0 transition-opacity duration-500 ease-out">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 max-w-sm w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
+        <!-- MODIFICADO: Usamos max-w-lg para ancho uniforme -->
+        <div class="bg-white p-8 rounded-3xl shadow-2xl border border-gray-100 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-red-50/50">
                 <svg class="w-10 h-10 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                 </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-2">Sesión Expirada</h3>
-            <p class="text-gray-500 text-sm mb-8 leading-relaxed">Por seguridad, tu sesión se ha cerrado tras un periodo de inactividad.</p>
+            <!-- TEXTOS ACTUALIZADOS: PUNTUALES Y GENÉRICOS -->
+            <h3 class="text-2xl font-bold text-gray-800 mb-2" id="timeout-title">Sesión Finalizada por Seguridad</h3>
+            <p class="text-gray-500 text-sm mb-8 leading-relaxed" id="timeout-message">Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.</p>
             <button onclick="location.reload()" class="w-full bg-montessori-blue text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-blue-800 hover:shadow-montessori-blue/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0">
-                Reconectar
+                Restablecer Sesión
             </button>
         </div>
     </div>
@@ -261,20 +263,22 @@
     <!-- MODAL ACCESO DENEGADO (POP-UP) -->
     <!-- ================================ -->
     <div id="access-denied-modal" class="hidden fixed inset-0 z-[210] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
-        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300 border border-gray-100">
+        <!-- MODIFICADO: Mantenemos max-w-lg para ancho uniforme -->
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full mx-4 transform scale-95 transition-transform duration-300 border border-gray-100">
             <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4 animate-pulse">
                     <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
-                <h3 class="text-xl leading-6 font-bold text-gray-900 mb-2" id="modal-title">Acceso Restringido</h3>
+                <!-- TEXTOS ACTUALIZADOS: PUNTUALES Y GENÉRICOS -->
+                <h3 class="text-xl leading-6 font-bold text-gray-900 mb-2" id="modal-title">Acceso Restringido por Permisos</h3>
                 <div class="mt-2">
-                    <p class="text-sm text-gray-500 mb-6">No tienes permisos suficientes para ver el contenido de este grado.</p>
+                    <p class="text-sm text-gray-500 mb-6" id="access-denied-message">El acceso a este **curso** ha sido denegado. El perfil de usuario actual no tiene asignados los permisos necesarios para visualizar la información de este grado. Para asistencia o revisión de permisos, contacte al **Tío Christopher**.</p>
                 </div>
                 <div class="mt-2">
                     <button type="button" onclick="closeAccessDenied()" class="w-full inline-flex justify-center items-center rounded-xl border border-transparent shadow-md px-4 py-3 bg-gray-800 text-base font-bold text-white hover:bg-gray-700 focus:outline-none transition-all transform hover:-translate-y-0.5">
-                        Entendido
+                        Aceptar y Continuar
                     </button>
                 </div>
             </div>
@@ -296,7 +300,7 @@
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
                         <div class="text-pinceladas">Pinceladas</div>
-                        <div class="text-montessori-sub">MONTESSORI</div>
+                            <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
                 <!-- HEADER PERSONALIZADO -->
@@ -325,7 +329,7 @@
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-white">
             
             <div class="max-w-[1440px] mx-auto w-full">
-                <!-- DASHBOARD METRICS: DISEÑO CLEAN / FLAT (MEJORADO) -->
+                <!-- DASHBOARD METRICS: Mantenemos las 3 tarjetas originales -->
                 <div id="dashboard-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in">
                     
                     <!-- CARD 1: Periodo -->
@@ -456,7 +460,30 @@
         const btnText = document.getElementById('btn-text');
         const btnLoader = document.getElementById('btn-loader');
         const timeoutScreen = document.getElementById('timeout-screen');
+        const timeoutMessage = document.getElementById('timeout-message'); 
         const accessDeniedModal = document.getElementById('access-denied-modal');
+        const accessDeniedTitle = document.getElementById('modal-title'); // Usaremos este ID para el título
+        const accessDeniedMessage = document.getElementById('access-denied-message'); 
+        const accessDeniedButton = accessDeniedModal.querySelector('button'); // Referencia al botón
+
+        // Variables globales de sesión simplificadas
+        let userPermissions = '';
+
+        // Función de personalización simplificada para solo manejar el login/logout
+        function initDynamicTexts(name) {
+            userNameDisplay.textContent = name || 'Usuario';
+
+            // Configuración del modal de Acceso Denegado (Texto actualizado)
+            accessDeniedTitle.textContent = 'Acceso Restringido por Permisos';
+            accessDeniedMessage.textContent = 'El acceso a este curso ha sido denegado. El perfil de usuario actual no tiene asignados los permisos necesarios para visualizar la información de este grado. Para asistencia o revisión de permisos, contacte al Tío Christopher.';
+            accessDeniedButton.textContent = 'Aceptar y Continuar';
+
+            // Configuración del modal de Timeout (Texto actualizado)
+            document.getElementById('timeout-title').textContent = 'Sesión Finalizada por Seguridad';
+            document.getElementById('timeout-message').textContent = 'Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.';
+            document.querySelector('#timeout-content button').textContent = 'Restablecer Sesión';
+        }
+
 
         const quotes = [
             "Lo más importante es que lo más importante sea lo más importante.",
@@ -499,11 +526,14 @@
 
         function handleSessionTimeout() {
             sessionStorage.removeItem('pinceladas_session');
+            
+            // Los textos del modal de Timeout son estáticos y específicos (según la última indicación)
+            
             timeoutScreen.classList.remove('hidden');
             requestAnimationFrame(() => {
-                 timeoutScreen.classList.remove('opacity-0');
                  document.getElementById('timeout-content').classList.remove('scale-95');
                  document.getElementById('timeout-content').classList.add('scale-100');
+                 timeoutScreen.classList.remove('opacity-0');
             });
             appContent.classList.add('blur-sm');
         }
@@ -515,6 +545,8 @@
             matchWidths();
             checkSessionValidity();
             checkSystemStatus(); 
+            // Inicializar textos genéricos y dashboard
+            initDynamicTexts();
         };
 
         function checkSessionValidity() {
@@ -527,6 +559,7 @@
                     sessionStorage.removeItem('pinceladas_session');
                 } else {
                     currentUserTimeoutMs = sessionTimeout;
+                    userPermissions = session.permissions || ''; 
                     skipIntro(session.name);
                     resetInactivityTimer();
                 }
@@ -571,6 +604,8 @@
                 if (data.success) {
                     updateLoginStatus('success', '¡Acceso Autorizado! Redirigiendo...');
                     currentUserTimeoutMs = (data.timeout || 1.5) * 60 * 1000;
+                    userPermissions = data.permissions || ''; // Guardar permisos
+                    
                     sessionStorage.setItem('pinceladas_session', JSON.stringify({
                         auth: true,
                         name: data.name,
@@ -684,6 +719,7 @@
 
         function initApp(name) {
             userNameDisplay.textContent = name || 'Usuario';
+            // initDynamicTexts(name); // Solo se llama en window.onload para inicializar textos genéricos
             renderGrades();
             startStatusCycle(name);
             loadAnnouncements();
@@ -784,7 +820,7 @@
                 return `
                     <div ${finalAction} class="${finalClasses}">
                          <div>
-                            <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mb-1">Grado</p>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Grado</p>
                             <h3 class="${gradeClasses}">${g.nombre}</h3>
                          </div>
                          <div class="${iconClasses}">
@@ -802,6 +838,9 @@
         
         // Nueva función para mostrar el mensaje de acceso denegado
         function showAccessDeniedMessage() {
+            // Re-inicializa los textos genéricos antes de mostrar el popup
+            initDynamicTexts();
+
             accessDeniedModal.classList.remove('hidden');
             setTimeout(() => {
                 accessDeniedModal.classList.remove('opacity-0', 'scale-95');
