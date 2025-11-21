@@ -41,7 +41,6 @@
                     },
                     animation: {
                         'blob': 'blob 20s infinite alternate',
-                        // AJUSTE: Movimiento diagonal simple (diagonalShift) a 3s, suave y alterna.
                         'diagonal-shift': 'diagonalShift 3s ease-in-out infinite alternate',
                         'random-shift': 'randomShift 3s ease-in-out infinite alternate', 
                     },
@@ -52,7 +51,6 @@
                             '66%': { transform: 'translate(-60px, 60px) scale(0.9) rotate(-10deg)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         },
-                        // Se mantiene randomShift pero se usará el diagonalShift
                         randomShift: {
                             '0%': { 'background-position': '0% 0%', 'transform': 'rotate(0deg) scale(1)' },
                             '25%': { 'background-position': '25% 75%', 'transform': 'rotate(5deg) scale(1.05)' },
@@ -60,7 +58,6 @@
                             '75%': { 'background-position': '75% 25%', 'transform': 'rotate(8deg) scale(1.1)' },
                             '100%': { 'background-position': '100% 100%', 'transform': 'rotate(0deg) scale(1)' },
                         },
-                        // Animación Diagonal Simple
                         diagonalShift: {
                             '0%': { 'background-position': '0% 0%' },
                             '100%': { 'background-position': '100% 100%' },
@@ -80,8 +77,12 @@
             flex-direction: column;
         }
 
-        /* Optimización de renderizado */
-        .animate-blob, .animate-random-shift, .animate-diagonal-shift, .transition-all, .transform, .marquee-content, #app-content, #view-home, #view-students {
+        /* CORRECCIÓN DE BORROSIDAD:
+           Se eliminaron .transform y .transition-all de esta regla.
+           Forzar translateZ(0) en elementos de UI interactiva causa rasterización 
+           de texto y pérdida de nitidez (efecto borroso).
+        */
+        .animate-blob, .animate-random-shift, .animate-diagonal-shift, .marquee-content, #app-content, #view-home, #view-students {
             will-change: transform, opacity;
             transform: translateZ(0);
             backface-visibility: hidden;
@@ -153,10 +154,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* --- TRANSICIONES OPTIMIZADAS --- 
-           Eliminado 'blur' para evitar parpadeos y carga de GPU.
-           Tiempos ajustados para mayor fluidez.
-        */
+        /* --- TRANSICIONES OPTIMIZADAS --- */
         .fade-out { animation: fadeOut 0.4s ease-out forwards; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         
@@ -227,11 +225,9 @@
             text-shadow: 0 2px 4px rgba(255,255,255,0.5); 
         }
 
-        /* Colores definidos - Alta visibilidad */
         .grade-particle.blue { color: rgba(0, 32, 96, 0.25); }
         .grade-particle.red { color: rgba(192, 0, 0, 0.25); }
 
-        /* Animación Fondo */
         .grade-particle.background {
             animation: floatUp linear infinite;
         }
@@ -249,7 +245,6 @@
             }
         }
 
-        /* Patrón de cuadrícula sutil */
         .grid-overlay {
             position: absolute;
             inset: 0;
@@ -260,24 +255,20 @@
             z-index: 0;
         }
 
-        /* --- NUEVO FONDO ANIMADO DE FRANJAS --- */
         .animated-diagonal-background {
-            /* Usamos colores muy claros (blue-100 y red-100) para un efecto suave */
             background: repeating-linear-gradient(
                 45deg, 
-                #DBEAFE 0%,      /* blue-100 */
+                #DBEAFE 0%,
                 #DBEAFE 40%, 
-                #FEE2E2 60%,      /* red-100 */
+                #FEE2E2 60%,
                 #FEE2E2 100%
             );
-            /* Tamaño de fondo grande para que las franjas sean amplias */
             background-size: 200vw 200vh;
-            /* Aplicar la animación de movimiento con la nueva clase: ahora es diagonal-shift */
             animation: diagonalShift 3s ease-in-out infinite alternate; 
-            position: absolute; /* Es importante para que cubra el inset */
+            position: absolute; 
             inset: 0;
             z-index: 0;
-            will-change: background-position, transform; /* Optimización de rendimiento */
+            will-change: background-position, transform; 
         }
     </style>
 </head>
@@ -286,19 +277,11 @@
     <!-- ================================ -->
     <!-- PANTALLA DE CARGA INICIAL (PRELOADER) -->
     <!-- ================================ -->
-    <!-- z-300 -->
     <div id="initial-loader" class="fixed inset-0 z-[300] flex items-center justify-center bg-blue-50 transition-all duration-700">
-        <!-- Blobs de Fondo (z-0 relativo a este padre) -->
-        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
         <div class="animated-diagonal-background animate-diagonal-shift"></div>
-        
-        <!-- PARTICULAS ACADÉMICAS (z-10: Encima del nuevo fondo) -->
         <div class="particles-container z-10">
             <div class="grid-overlay"></div>
-            <!-- JS inyectará partículas aquí -->
         </div>
-
-        <!-- CONTENIDO (z-20: Encima de todo) -->
         <div class="relative z-20 flex flex-col items-center justify-center">
             <h1 class="text-5xl md:text-7xl font-bold font-montserrat animate-blue-red drop-shadow-sm text-center leading-tight">
                 Cargando...
@@ -309,19 +292,12 @@
     <!-- ================================ -->
     <!-- PANTALLA DE LOGIN -->
     <!-- ================================ -->
-    <!-- z-100 -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-blue-50 overflow-hidden transition-all duration-700">
-        <!-- Blobs de Fondo (z-0) -->
-        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
         <div class="animated-diagonal-background animate-diagonal-shift"></div>
-
-        <!-- PARTICULAS ACADÉMICAS (z-10: Debajo de la tarjeta de login que es z-20) -->
         <div class="particles-container z-10">
             <div class="grid-overlay"></div>
-            <!-- JS inyectará partículas aquí -->
         </div>
 
-        <!-- Tarjeta y contenido (z-20 y superior) -->
         <div id="quote-container" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto">
             <h2 id="quote-text" class="text-3xl md:text-5xl font-bold text-montessori-blue leading-tight font-montserrat drop-shadow-sm mb-4"></h2>
             <div class="h-1 w-24 bg-montessori-red rounded-full mx-auto"></div>
@@ -383,19 +359,12 @@
     <!-- ================================ -->
     <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
     <!-- ================================ -->
-    <!-- z-200 -->
     <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-blue-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
-        <!-- Blobs de Fondo (z-0) -->
-        <!-- FONDO DE FRANJAS ANIMADAS - CLASE AJUSTADA A diagonal-shift -->
         <div class="animated-diagonal-background animate-diagonal-shift"></div>
-
-        <!-- PARTICULAS ACADÉMICAS (z-10) -->
         <div class="particles-container z-10">
             <div class="grid-overlay"></div>
-            <!-- JS inyectará partículas aquí -->
         </div>
         
-        <!-- Contenido modal (z-20) -->
         <div class="relative z-20 bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/50 max-w-lg w-full text-center transform transition-transform duration-500 scale-95" id="timeout-content">
             <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 ring-4 ring-red-50/50">
                 <svg class="w-10 h-10 text-montessori-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -437,19 +406,15 @@
     <!-- ================================ -->
     <!-- APLICACIÓN PRINCIPAL -->
     <!-- ================================ -->
-    <!-- z-0: Base del app -->
     <div id="app-content" class="hidden flex-col h-full w-full relative z-0 opacity-0 transition-opacity duration-1000 overflow-hidden">
         
-        <!-- FONDO ACADÉMICO INYECTADO (z-0: Fondo base) -->
         <div id="academic-background" class="particles-container z-0">
             <div class="grid-overlay"></div>
-            <!-- JS inyectará partículas aquí -->
         </div>
 
         <!-- HEADER (z-50) -->
         <header class="bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
             <div class="w-full px-6 h-full flex justify-between items-center">
-                <!-- LOGO NO CLICKEABLE -->
                 <div class="logo-container logo-sm select-none">
                     <div class="text-section flex flex-col items-center">
                         <div class="text-colegio">COLEGIO</div>
@@ -457,18 +422,14 @@
                             <div class="text-montessori-sub">MONTESSORI</div>
                     </div>
                 </div>
-                <!-- HEADER PERSONALIZADO -->
                 <div class="flex items-center h-full">
-                    <!-- Info Usuario -->
                     <div class="flex flex-col items-end mr-4">
                         <span class="text-[9px] font-bold text-gray-600 uppercase tracking-widest leading-tight">Conectado como</span>
                         <span id="user-name-display" class="text-sm font-black text-montessori-blue leading-tight">...</span>
                     </div>
 
-                    <!-- Separador Vertical -->
                     <div class="h-6 w-px bg-gray-200 mx-1"></div>
 
-                    <!-- Botón Salir -->
                     <button onclick="logout()" class="ml-4 bg-red-50 hover:bg-red-100 text-red-500 font-bold text-xs px-3 py-1.5 rounded transition-all duration-200 flex items-center gap-2 group border border-transparent hover:border-red-200 uppercase tracking-wide">
                         <span>Cerrar Sesión</span>
                         <svg class="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -479,7 +440,7 @@
             </div>
         </header>
 
-        <!-- MAIN (z-10: Encima del fondo, pero debajo del header) -->
+        <!-- MAIN -->
         <main class="flex-1 w-full px-6 py-6 no-scrollbar overflow-y-auto bg-transparent relative z-10">
             
             <div class="w-full">
@@ -709,7 +670,6 @@
         }
 
         window.onload = () => {
-            // Se elimina la lógica de 'handleMouseMove' para optimizar rendimiento
             document.body.onmousemove = resetInactivityTimer;
             document.body.onkeydown = resetInactivityTimer;
             document.body.onclick = resetInactivityTimer;
@@ -720,7 +680,7 @@
             
             checkSystemStatus(); 
             initDynamicTexts();
-            initAllParticles(); // Inicializar fondos animados en todas las pantallas
+            initAllParticles(); 
         };
 
         function checkSessionValidity() {
@@ -775,7 +735,6 @@
             btnLogin.disabled = true;
 
             try {
-                // Agregamos redirect: 'follow' para mayor robustez con GAS
                 const response = await fetch(`${API_URL}?action=login&username=${encodeURIComponent(usernameInput)}&password=${encodeURIComponent(passwordInput)}`, {
                     redirect: "follow"
                 });
@@ -797,8 +756,6 @@
                         loginTime: new Date().getTime()
                     }));
                     
-                    // ESCALONAR PETICIONES:
-                    // No llamar a todo al mismo tiempo para evitar errores de "Failed to fetch" (bloqueo temporal por muchas peticiones)
                     setTimeout(() => checkSystemStatus(data.name), 100); 
                     setTimeout(() => prefetchGradesData(), 300);
                     setTimeout(() => loadAnnouncements(), 800); 
@@ -807,10 +764,9 @@
                         unlockInterface(data.name);
                     }, 1000);
                 } else {
-                    throw new Error('Credenciales'); // Error específico de lógica
+                    throw new Error('Credenciales'); 
                 }
             } catch (error) {
-                // Distinguir entre error de red y credenciales
                 if (error.message === 'Credenciales') {
                     updateLoginStatus('error', 'Credenciales incorrectas');
                 } else {
@@ -959,7 +915,6 @@
             const track2 = document.getElementById('marquee-track-clone');
             
             try {
-                // Redirect follow es importante para GAS
                 const response = await fetch(`${API_URL}?action=getAnnouncements`, { redirect: "follow" });
                 
                 if (!response.ok) throw new Error('Error de red al cargar anuncios');
@@ -980,7 +935,6 @@
                     banner.classList.add('hidden'); 
                 }
             } catch (e) {
-                // Usar warn en lugar de error para no alarmar en consola si falla la red
                 console.warn("No se pudieron cargar los anuncios (posible bloqueo de red):", e.message);
                 banner.classList.add('hidden');
             }
@@ -1102,7 +1056,6 @@
                 ? 'text-montessori-red border-montessori-red hover:bg-montessori-red' 
                 : 'text-montessori-blue border-montessori-blue hover:bg-montessori-blue';
 
-            // OPTIMIZACIÓN: Eliminada la clase 'fade-in' de cada fila para mejorar rendimiento masivo
             container.innerHTML = data.map((student, index) => `
                 <div class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg ${hoverClass} hover:shadow-sm transition-colors">
                     <div class="flex items-center gap-4">
@@ -1116,8 +1069,6 @@
             `).join('');
         }
 
-        // --- LÓGICA DEL FONDO ACADÉMICO ---
-        // Se eliminó la lógica de generación de partículas por mouse
         const symbols = ['100', 'A+', 'A', '10', '✓', '95', 'B+', '★', '90', 'A', '100'];
 
         function initAllParticles() {
@@ -1126,7 +1077,7 @@
         }
 
         function createParticlesForContainer(container) {
-            const particleCount = 18; // Densidad por pantalla
+            const particleCount = 18; 
             
             for (let i = 0; i < particleCount; i++) {
                 spawnParticle(container);
@@ -1138,14 +1089,12 @@
             span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
             span.classList.add('grade-particle');
             
-            // Color aleatorio (Azul o Rojo)
             if (Math.random() > 0.5) span.classList.add('blue');
             else span.classList.add('red');
 
             const rotation = Math.floor(Math.random() * 40 - 20);
             span.style.setProperty('--rotation', `${rotation}deg`);
 
-            // Partícula de fondo
             span.classList.add('background');
             const left = Math.random() * 100;
             const duration = 15 + Math.random() * 20; 
