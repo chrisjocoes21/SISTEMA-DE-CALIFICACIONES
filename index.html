@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Notas - Pinceladas Montessori</title>
     
+    <!-- OPTIMIZACIÓN DE CONEXIÓN (PRECONNECT) -->
+    <!-- Esto prepara el camino hacia Google antes de que se necesite -->
+    <link rel="preconnect" href="https://docs.google.com">
+    <link rel="preconnect" href="https://sheets.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- FAVICON -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2240%22 width=%2220%22 height=%2250%22 rx=%224%22 fill=%22%23002060%22/><rect x=%2240%22 y=%2225%22 width=%2220%22 height=%2265%22 rx=%224%22 fill=%22%23002060%22/><rect x=%2270%22 y=%2210%22 width=%2220%22 height=%2280%22 rx=%224%22 fill=%22%23C00000%22/></svg>">
 
     <!-- Fuentes -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Chewy&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,18 +82,42 @@
             flex-direction: column;
         }
 
-        /* CORRECCIÓN DE BORROSIDAD:
-           Se eliminaron .transform y .transition-all de esta regla.
-           Forzar translateZ(0) en elementos de UI interactiva causa rasterización 
-           de texto y pérdida de nitidez (efecto borroso).
-        */
+        /* OPTIMIZACIÓN DE RENDERIZADO */
         .animate-blob, .animate-random-shift, .animate-diagonal-shift, .marquee-content, #app-content, #view-home, #view-students {
             will-change: transform, opacity;
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-font-smoothing: antialiased;
         }
+
+        /* CLASE PARA MODO DE ALTO RENDIMIENTO (LISTA DE ALUMNOS) */
+        /* Esto oculta agresivamente todos los elementos pesados */
+        body.high-performance-mode .particles-container,
+        body.high-performance-mode .animated-diagonal-background,
+        body.high-performance-mode .grid-overlay {
+            display: none !important;
+        }
         
+        body.high-performance-mode {
+            background: #ffffff !important;
+        }
+        
+        /* Loader de texto minimalista */
+        @keyframes ellipsis {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+        .loading-text::after {
+            content: '';
+            animation: ellipsis 1.5s infinite;
+            display: inline-block;
+            width: 12px;
+            text-align: left;
+        }
+
+        /* --- CLASES DE UTILIDAD --- */
         main {
             flex: 1;
             overflow-y: auto; 
@@ -143,7 +172,7 @@
         .animate-blue-red { animation: blueRedCycle 3s infinite cubic-bezier(0.4, 0, 0.2, 1); }
 
 
-        /* Loader */
+        /* Loader circular (Solo para login y acciones pequeñas) */
         .loader {
             border: 3px solid rgba(255,255,255,0.3); 
             border-radius: 50%; 
@@ -154,7 +183,7 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* --- TRANSICIONES OPTIMIZADAS --- */
+        /* --- TRANSICIONES --- */
         .fade-out { animation: fadeOut 0.4s ease-out forwards; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         
@@ -357,7 +386,7 @@
     </div>
 
     <!-- ================================ -->
-    <!-- PANTALLA DE TIMEOUT (OPTIMIZADA) -->
+    <!-- PANTALLA DE TIMEOUT -->
     <!-- ================================ -->
     <div id="timeout-screen" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-blue-50 overflow-hidden opacity-0 transition-opacity duration-500 ease-out">
         <div class="animated-diagonal-background animate-diagonal-shift"></div>
@@ -380,7 +409,7 @@
     </div>
 
     <!-- ================================ -->
-    <!-- MODAL ACCESO DENEGADO (POP-UP) -->
+    <!-- MODAL ACCESO DENEGADO -->
     <!-- ================================ -->
     <div id="access-denied-modal" class="hidden fixed inset-0 z-[210] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full mx-4 transform scale-95 transition-transform duration-300 border border-gray-100">
@@ -404,6 +433,47 @@
     </div>
 
     <!-- ================================ -->
+    <!-- MODAL DE BOLETÍN (OPTIMIZADO Y SIN TRANSICIÓN) -->
+    <!-- ================================ -->
+    <!-- Eliminamos transiciones en las clases del modal principal para apertura/cierre instantáneo -->
+    <div id="bulletin-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0">
+        <div class="bg-white w-[95%] h-[90%] md:w-[90%] md:h-[90%] rounded-2xl shadow-2xl flex flex-col overflow-hidden transform scale-100" id="bulletin-modal-content">
+            <!-- Header del Modal -->
+            <div class="flex justify-between items-center px-6 py-3 bg-white border-b border-gray-200">
+                <div class="flex items-center gap-3">
+                    <div class="bg-montessori-blue/10 p-2 rounded-lg">
+                        <svg class="w-5 h-5 text-montessori-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-lg">Editor de Boletín</h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a id="external-link-btn" href="#" target="_blank" class="text-xs font-semibold text-montessori-blue hover:underline mr-2 hidden md:inline-block">
+                        Abrir en nueva pestaña
+                    </a>
+                    <button id="close-bulletin-btn" class="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-red-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Cuerpo del Modal -->
+            <div class="flex-1 bg-gray-100 relative">
+                 <div id="iframe-loader" class="absolute inset-0 flex items-center justify-center bg-white z-10">
+                    <div class="flex flex-col items-center gap-1">
+                        <!-- LOADER DE TEXTO MINIMALISTA -->
+                        <span class="text-sm font-bold text-montessori-blue loading-text">Cargando documento</span>
+                    </div>
+                 </div>
+                 <iframe id="bulletin-iframe" class="w-full h-full border-0" allow="autoplay" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================================ -->
     <!-- APLICACIÓN PRINCIPAL -->
     <!-- ================================ -->
     <div id="app-content" class="hidden flex-col h-full w-full relative z-0 opacity-0 transition-opacity duration-1000 overflow-hidden">
@@ -412,7 +482,7 @@
             <div class="grid-overlay"></div>
         </div>
 
-        <!-- HEADER (z-50) -->
+        <!-- HEADER -->
         <header class="bg-white/90 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 h-14 flex-shrink-0 w-full">
             <div class="w-full px-6 h-full flex justify-between items-center">
                 <div class="logo-container logo-sm select-none">
@@ -485,9 +555,8 @@
                     </div>
                 </div>
 
-                <!-- VISTA HOME: LISTADO GRADOS -->
+                <!-- VISTA HOME -->
                 <div id="view-home" class="max-w-[1440px] mx-auto fade-in h-full flex flex-col pb-8 w-full">
-                    
                     <!-- Primaria -->
                     <div class="flex items-center gap-3 mb-4 pb-1">
                         <div class="h-6 w-1.5 bg-montessori-red rounded-full"></div>
@@ -502,7 +571,7 @@
                     </div>
                     <div id="grid-secundaria" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
-                    <!-- BANNER DE ANUNCIOS -->
+                    <!-- BANNER -->
                     <div id="announcement-banner" class="hidden mt-8 rounded-xl overflow-hidden shadow-sm border border-montessori-red fade-in relative bg-white w-full">
                         <div class="flex items-center relative h-12">
                             <div class="absolute left-0 top-0 h-full z-20 bg-white pr-4 pl-4 flex items-center gap-2 border-r border-montessori-red shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
@@ -521,7 +590,7 @@
                     </div>
                 </div>
 
-                <!-- VISTA ESTUDIANTES -->
+                <!-- VISTA ESTUDIANTES (Optimizado: fondo estático) -->
                 <div id="view-students" class="hidden fade-in w-full">
                     <div class="w-full"> 
                         <div class="flex items-center gap-2 mb-6 text-sm text-gray-600">
@@ -537,10 +606,11 @@
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="font-bold text-gray-700 text-lg">Listado Oficial</h3>
                                 <div id="loading-indicator" class="hidden flex items-center gap-2 text-montessori-blue">
-                                     <div class="loader" style="width: 16px; height: 16px; border-width: 2px; border-color: #E5E7EB; border-top-color: #002060;"></div>
-                                     <span class="text-xs font-medium">Actualizando...</span>
+                                     <!-- Loader pequeño inline -->
+                                     <span class="text-xs font-medium loading-text">Actualizando</span>
                                 </div>
                             </div>
+                            <!-- Container optimizado -->
                             <div id="students-list-container" class="space-y-2"></div>
                         </div>
                     </div>
@@ -577,6 +647,17 @@
         const accessDeniedMessage = document.getElementById('access-denied-message'); 
         const accessDeniedButton = accessDeniedModal.querySelector('button'); 
         const initialLoader = document.getElementById('initial-loader');
+        
+        // --- Modal de Boletín Elements ---
+        const bulletinModal = document.getElementById('bulletin-modal');
+        const bulletinModalContent = document.getElementById('bulletin-modal-content');
+        const bulletinIframe = document.getElementById('bulletin-iframe');
+        const iframeLoader = document.getElementById('iframe-loader');
+        const externalLinkBtn = document.getElementById('external-link-btn');
+        const closeBulletinBtn = document.getElementById('close-bulletin-btn');
+        
+        // Container de estudiantes para Event Delegation
+        const studentsContainer = document.getElementById('students-list-container');
 
         let userPermissions = '';
 
@@ -593,7 +674,6 @@
             document.getElementById('timeout-message').textContent = 'Para proteger la confidencialidad de la información académica, la sesión ha finalizado tras detectar un periodo de inactividad. Presione el botón para restablecer el acceso.';
             document.querySelector('#timeout-content button').textContent = 'Restablecer Sesión';
         }
-
 
         const quotes = [
             "Lo más importante es que lo más importante sea lo más importante.",
@@ -625,6 +705,8 @@
         let currentUserTimeoutMs = 1.5 * 60 * 1000; 
         let statusInterval; 
 
+        // --- OPTIMIZACIÓN DE EVENTOS Y SETUP ---
+        
         const matchWidths = () => {
             try {
                 document.querySelectorAll('.logo-container').forEach(container => {
@@ -636,22 +718,17 @@
                 });
             } catch (error) { console.error(error); }
         };
-        window.addEventListener('resize', matchWidths);
 
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (loginScreen.classList.contains('hidden') && 
                 timeoutScreen.classList.contains('hidden')) { 
-                
-                inactivityTimer = setTimeout(() => {
-                    handleSessionTimeout();
-                }, currentUserTimeoutMs);
+                inactivityTimer = setTimeout(() => handleSessionTimeout(), currentUserTimeoutMs);
             }
         }
 
         function handleSessionTimeout() {
             sessionStorage.removeItem('pinceladas_session');
-            
             timeoutScreen.classList.remove('hidden');
             requestAnimationFrame(() => {
                  document.getElementById('timeout-content').classList.remove('scale-95');
@@ -673,14 +750,42 @@
             document.body.onmousemove = resetInactivityTimer;
             document.body.onkeydown = resetInactivityTimer;
             document.body.onclick = resetInactivityTimer;
+            window.addEventListener('resize', matchWidths);
+
             matchWidths();
-            setTimeout(() => {
-                 checkSessionValidity();
-            }, 800);
-            
+            setTimeout(() => checkSessionValidity(), 800);
             checkSystemStatus(); 
             initDynamicTexts();
             initAllParticles(); 
+            
+            // Iframe load listener
+            bulletinIframe.onload = () => {
+                iframeLoader.classList.add('hidden');
+            };
+            
+            closeBulletinBtn.addEventListener('click', closeBulletinModal);
+            
+            if(studentsContainer) {
+                // Evento Click (Abre Modal)
+                studentsContainer.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.btn-bulletin-action');
+                    if (btn && btn.dataset.link) {
+                        e.preventDefault(); 
+                        openBulletinModal(btn.dataset.link);
+                    }
+                });
+                
+                // ESTRATEGIA 1: Evento Mouseover (Prefetch / Pre-carga)
+                // Cuando el mouse pasa sobre el botón, iniciamos la conexión antes del clic
+                studentsContainer.addEventListener('mouseover', function(e) {
+                    const btn = e.target.closest('.btn-bulletin-action');
+                    if (btn && btn.dataset.link && !btn.dataset.prefetched) {
+                        // Prefetch con URL completa, sin optimizar a /preview
+                        prefetchBulletin(btn.dataset.link);
+                        btn.dataset.prefetched = "true"; // Evitar prefetch repetido
+                    }
+                });
+            }
         };
 
         function checkSessionValidity() {
@@ -882,10 +987,7 @@
             const label = document.getElementById('status-label');
             const iconBg = document.getElementById('status-icon-bg');
             
-            if (!dot || !label || !iconBg) {
-                console.error("Dashboard elements not fully loaded. Skipping status check.");
-                return; 
-            }
+            if (!dot || !label || !iconBg) return; 
             
             let url = `${API_URL}?action=checkStatus&t=${new Date().getTime()}`;
             if (username) url += `&username=${encodeURIComponent(username)}`;
@@ -935,7 +1037,6 @@
                     banner.classList.add('hidden'); 
                 }
             } catch (e) {
-                console.warn("No se pudieron cargar los anuncios (posible bloqueo de red):", e.message);
                 banner.classList.add('hidden');
             }
         }
@@ -1007,6 +1108,9 @@
             document.getElementById('view-home').classList.remove('hidden');
             document.getElementById('dashboard-metrics').classList.remove('hidden');
             document.getElementById('view-students').classList.add('hidden');
+            
+            // REACTIVAR ANIMACIONES AL VOLVER AL HOME
+            document.body.classList.remove('high-performance-mode');
         }
 
         async function loadStudents(grade, level) {
@@ -1014,6 +1118,9 @@
                 showAccessDeniedMessage();
                 return; 
             }
+
+            // OPTIMIZACIÓN AGRESIVA: MATAR ANIMACIONES DE FONDO
+            document.body.classList.add('high-performance-mode');
 
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('dashboard-metrics').classList.add('hidden');
@@ -1025,7 +1132,11 @@
 
             const listContainer = document.getElementById('students-list-container');
             const loader = document.getElementById('loading-indicator');
-            listContainer.innerHTML = '';
+            
+            while (listContainer.firstChild) {
+                listContainer.removeChild(listContainer.firstChild);
+            }
+            
             loader.classList.remove('hidden');
             
             const key = `${grade}-${level}`;
@@ -1045,6 +1156,49 @@
             }
         }
 
+        // --- FUNCIONES HELPERS PARA ESTRATEGIAS DE VELOCIDAD ---
+
+        // Función eliminada: optimizeGoogleUrl (Ya no se usa el modo /preview)
+
+        // ESTRATEGIA 1: Inyecta el link prefetch al head (Ahora usa la URL completa)
+        function prefetchBulletin(url) {
+            // Crear elemento link
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = url;
+            document.head.appendChild(link);
+        }
+
+        // --- FUNCIONES DE MODAL (CERO LAG + MODO EDICIÓN) ---
+        
+        function openBulletinModal(url) {
+            if (!url) return;
+            
+            // 1. Pausa de animaciones de fondo
+            document.body.classList.add('animations-paused');
+            
+            // 2. Usamos la URL original (Modo Edición)
+            iframeLoader.classList.remove('hidden');
+            bulletinIframe.src = url; // <-- Se usa la URL original para la edición
+            externalLinkBtn.href = url;
+
+            // 3. Mostrar Modal (INSTANTÁNEO)
+            bulletinModal.classList.remove('hidden', 'opacity-0');
+        }
+
+        function closeBulletinModal() {
+            // 1. Ocultar visualmente PRIMERO
+            bulletinModal.classList.add('opacity-0', 'hidden');
+            
+            // 2. Reactivar animaciones
+            document.body.classList.remove('animations-paused');
+            
+            // 3. Destruir el iframe
+            setTimeout(() => {
+                bulletinIframe.removeAttribute('src'); 
+            }, 50);
+        }
+
         function renderStudentList(data, container, level) {
             if (!data || data.length === 0) {
                 container.innerHTML = `<div class="text-center py-10 text-gray-600">Sin registros</div>`;
@@ -1062,9 +1216,11 @@
                         <span class="font-bold text-gray-600 w-6 text-right">${index + 1}.</span>
                         <span class="font-semibold text-gray-700">${student.nombre}</span>
                     </div>
-                    <a href="${student.link}" target="_blank" class="text-sm font-bold ${btnClass} px-4 py-2 rounded-lg hover:text-white border transition-all">
+                    <button type="button" 
+                            class="btn-bulletin-action text-sm font-bold ${btnClass} px-4 py-2 rounded-lg hover:text-white border transition-all cursor-pointer"
+                            data-link="${student.link}">
                         Boletín
-                    </a>
+                    </button>
                 </div>
             `).join('');
         }
@@ -1078,7 +1234,6 @@
 
         function createParticlesForContainer(container) {
             const particleCount = 18; 
-            
             for (let i = 0; i < particleCount; i++) {
                 spawnParticle(container);
             }
@@ -1088,7 +1243,6 @@
             const span = document.createElement('span');
             span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
             span.classList.add('grade-particle');
-            
             if (Math.random() > 0.5) span.classList.add('blue');
             else span.classList.add('red');
 
