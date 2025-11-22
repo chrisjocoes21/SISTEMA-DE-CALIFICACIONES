@@ -298,8 +298,8 @@
         .cal-nav-btn:active { transform: scale(0.95); }
 
         /* Modal Styles */
-        .modal-overlay { backdrop-filter: blur(4px); background-color: rgba(0, 32, 96, 0.4); }
-
+        /* Eliminada la clase .modal-overlay personalizada porque ahora usamos clases de Tailwind directamente */
+        
         /* --- FONDO ACADÉMICO Y PARTÍCULAS --- */
         .particles-container {
             position: absolute;
@@ -490,7 +490,8 @@
     <!-- ================================ -->
     <!-- MODAL CALENDARIO PRINCIPAL -->
     <!-- ================================ -->
-    <div id="calendar-modal" class="hidden fixed inset-0 z-[260] flex items-center justify-center modal-overlay opacity-0 transition-opacity duration-200">
+    <!-- MODIFICADO: Ahora usa bg-black/50 y backdrop-blur-sm para igualar el efecto del acceso denegado -->
+    <div id="calendar-modal" class="hidden fixed inset-0 z-[260] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
         <!-- Contenido Modal -->
         <div class="bg-white w-full max-w-5xl rounded-3xl shadow-card border border-gray-200 overflow-hidden flex flex-col md:flex-row h-auto md:h-[500px] mx-4 transform scale-95 transition-transform duration-200" id="calendar-modal-content">
             <!-- BOTÓN CERRAR -->
@@ -545,7 +546,8 @@
     </div>
 
     <!-- MODAL DETALLE EVENTO (Z-Index mayor que el calendario) -->
-    <div id="event-detail-modal" class="hidden fixed inset-0 z-[270] flex items-center justify-center modal-overlay opacity-0 transition-opacity duration-200">
+    <!-- MODIFICADO: Ahora usa bg-black/50 y backdrop-blur-sm para igualar el efecto del acceso denegado -->
+    <div id="event-detail-modal" class="hidden fixed inset-0 z-[270] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-200">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 transform scale-95 transition-transform duration-200 overflow-hidden" id="event-detail-content">
             <div class="bg-montessori-blue p-5 text-white relative">
                 <button onclick="closeEventDetailModal()" class="absolute top-3 right-3 p-1 hover:bg-white/20 rounded-full transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
@@ -974,6 +976,10 @@
         }
 
         function handleSessionTimeout() {
+            // IMPORTANTE: Reactivar las animaciones de fondo (quitar modo alto rendimiento)
+            // Esto corrige el problema de que el fondo se vea blanco si hay un boletín abierto
+            document.body.classList.remove('high-performance-mode');
+
             // Cerrar cualquier modal abierto inmediatamente
             if (!bulletinModal.classList.contains('hidden')) {
                 closeBulletinModal();
@@ -984,7 +990,7 @@
                 calendarModal.classList.add('opacity-0');
                 calendarModalContent.classList.remove('scale-100');
                 calendarModalContent.classList.add('scale-95');
-                document.body.classList.remove('animations-paused');
+                // document.body.classList.remove('animations-paused'); // Ya no necesario aquí porque quitamos el high-performance-mode arriba
                 setTimeout(() => {
                     calendarModal.classList.add('hidden');
                 }, 200);
